@@ -1,12 +1,5 @@
 <?php if (!defined('WEBAPP')) die; ?>
-<!DOCTYPE HTML>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
-    <script type="text/javascript" src="jquery-1.11.1.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css" />
-</head>
-<body>
+<?php ob_start(); ?>
 <script type="text/javascript">
 $(document).ready(function(){
     $('.topic').click(function(){
@@ -23,12 +16,9 @@ $(document).ready(function(){
             return true;
         }
     });
-    $('.search-button').click(function(){
-        $('.search-form').toggle();
-        return false;
-    });
 });
 </script>
+<?php $js = ob_get_contents(); ob_end_clean(); ?>
 
 <?php
 
@@ -38,7 +28,7 @@ function nodeview($pid=0) {
     $sql = sprintf($sql, $pid);
     $s = '';   
     foreach($db->query($sql) as $row) {
-        $t = '<div class="subject"><div><a class="link" href="%s" target="right">%s</a></div></div>';
+        $t = '<div class="subject"><div><a class="link" href="%s" target="right">%s</a></div></div>'."\n";
         $u = 'index.php?cmd=subject&id='.$row['content_id'];
         $s .= sprintf($t,$u,htmlspecialchars($row['content_title']));
     }
@@ -54,12 +44,12 @@ function treeview($pid=0) {
         $topic = treeview($row['topic_id']);
         $node = nodeview($row['topic_id']);
         $text = $topic.$node;
-        $t = '<div><a class="link" href="%s" target="right">%s</a></div>';
+        $t = '<div><a class="link" href="%s" target="right">%s</a></div>'."\n";
         $s = sprintf($t, '', htmlspecialchars($row['topic_name']));
-        $t = '<div class="submenu" style="%s">%s</div>';
+        $t = '<div class="submenu" style="%s">%s</div>'."\n";
         $display='display:none;';
         if ($text!='') $s.=sprintf($t,$display,$text);
-        $t = '<div class="topic closed">%s</div>';
+        $t = '<div class="topic closed">%s</div>'."\n";
         $s = sprintf($t, $s);
         $r .= $s;
     }
@@ -67,16 +57,12 @@ function treeview($pid=0) {
 }
 
 ?>
+<?php
 
-    <h1><?php echo PROJECT_TITLE; ?></h1>
-    <?php echo view('menu.php'); ?>
-    <hr />
-    <div class="vblock">
-        <?php echo treeview(); ?>
-    </div>
-    <hr />
-    <p class="copyright">&copy; 2007-2014 Igor Salnikov</p>
+echo view('page.php', array(
+    'pos' => 'left',
+    'header' => PROJECT_TITLE,
+    'content' => $js.treeview()
+));
 
-</body>
-</html>
-
+?>

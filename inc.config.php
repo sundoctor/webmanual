@@ -13,6 +13,10 @@ if (!defined('WEBAPP')) die;
 
     define('DATABASE_FILE', dirname(__FILE__).'/content.db');
 
-    define('PROJECT_TITLE', 'Web Manual v0.01');
+    define('PROJECT_TITLE', 'WebManual v0.01');
+    
+    define('APPLICATION', 'WebManual');
+    
+    define('VERSION', '0.01');
 
 ?>

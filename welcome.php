@@ -1,15 +1,9 @@
 <?php if (!defined('WEBAPP')) die; ?>
-<!DOCTYPE HTML>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
-    <script type="text/javascript" src="jquery-1.11.1.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css" />
-</head>
-<body>
+<?php ob_start(); ?>
+
     <h1>Welcome to the WebManual!</h1>
     <ul class="mline">
-        <li>WebManual is free opensource system for help building</li>
+        <li><b>WebManual is free opensource system for fast network manual building</b></li>
     </ul>
     <hr />
     <div class="vblock">
@@ -17,6 +11,7 @@
         <p>You can change this starting text in file <b><?php echo __FILE__; ?></b></p>
     </div>
     <hr />
-    <p class="copyright">This page is created with WebManual v0.01</p>
-</body>
-</html>
+    <p class="copyright">This page is created with <?php echo APPLICATION; ?> v<?php echo VERSION; ?></p>
+
+<?php $r = ob_get_contents(); ob_end_clean(); ?>
+<?php echo view('center.php', array('title'=>PROJECT_TITLE, 'content'=>$r)); ?>

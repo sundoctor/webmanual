@@ -1,13 +1,6 @@
 <?php if (!defined('WEBAPP')) die; ?>
-<!DOCTYPE HTML>
-<html>
-<head>
-    <title><?php echo PROJECT_TITLE; ?></title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
-    <script type="text/javascript" src="jquery-1.11.1.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css" />
-</head>
-<body>
+<?php ob_start(); ?>
+
     <form action="index.php?cmd=login" method="post">
         <table class="login-form">
         <tbody>
@@ -26,5 +19,6 @@
         </tbody>
         </table>
     </form>
-</body>
-</html>
+    
+<?php $r = ob_get_contents(); ob_end_clean(); ?>
+<?php echo view('center.php', array('title'=>PROJECT_TITLE, 'content'=>$r)); ?>

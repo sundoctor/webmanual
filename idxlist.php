@@ -7,15 +7,6 @@
     <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
-<script type="text/javascript">
-$(document).ready(function(){
-    $('.search-button').click(function(){
-        $('.search-form').toggle();
-        return false;
-    });
-});
-</script>
-
 <?php
 
 function listview() {
@@ -28,21 +19,16 @@ function listview() {
         $u = 'index.php?cmd=subject&id='.$row['content_id'];
         $s .= sprintf($t, $u, htmlspecialchars($row['content_title']));
     }
-    return $s;
+    return '<div class="idxlist">'.$s.'</div>';
 }
 
 ?>
+<?php
 
-    <h1><?php echo PROJECT_TITLE; ?></h1>
-    <?php echo view('menu.php'); ?>
-    <hr />
-    <div class="vblock">
-    <div class="idxlist">
-        <?php echo listview(); ?>
-    </div>
-    </div>
-    <hr />
-    <p class="copyright">&copy; 2007-2014 Igor Salnikov</p>
+echo view('page.php', array(
+    'pos' => 'left',
+    'header' => PROJECT_TITLE,
+    'content' => $js.listview()
+));
 
-</body>
-</html>
+?>

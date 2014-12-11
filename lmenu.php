@@ -1,4 +1,12 @@
 <?php if (!defined('WEBAPP')) die; ?>
+<script type="text/javascript">
+$(document).ready(function(){
+    $('.search-button').click(function(){
+        $('.search-form').toggle();
+        return false;
+    });
+});
+</script>
     <ul class="mline">
         <li><a href="index.php" target="_top">Home</a> | </li>
         <li><a href="index.php?cmd=topic">Topics</a> | </li>
@@ -11,8 +19,8 @@
         <li><a href="index.php?cmd=login" target="_top">Login</a></li>
 <?php endif; ?>
     </ul>
-    <form action="index.php?cmd=search" class="search-form" style="display:none;">
-        <input type="text" name="search" size="30" maxlength="100" />
+    <form action="index.php?cmd=topic" method="post" class="search-form" style="display:none;">
+        <input type="text" name="search" size="40" maxlength="100" />
         <input type="submit" value=" Go search! " />
     </form>
  

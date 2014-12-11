@@ -7,6 +7,7 @@ html {
 }
 
 body {
+	background-color: #fff;
     height: 80%;
     font-family:Arial, Helvetica, sans-serif;
     font-size: 10pt; 
@@ -19,6 +20,7 @@ h1 {
 }
 
 div.vblock {
+    border: 1px solid #fff;
     height: 100%;
 }
 
