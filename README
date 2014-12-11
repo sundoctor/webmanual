@@ -2,7 +2,7 @@ Web Manual
 =============================
 
 Thank you for choosing Web Manual - opensource software
-for building structured internet help pages.
+written on PHP for building structured internet help pages.
 
 INSTALLATION
 ------------
@@ -26,6 +26,7 @@ Please visit github page of the project website
 for last version and discussion with other users.
 
 http://www.github.com/sundoctor/webmanual
+
 
 Regards,
 SunDoctor
