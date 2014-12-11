@@ -1,0 +1,34 @@
+Web Manual
+=============================
+
+Thank you for choosing Web Manual - opensource software
+for building structured internet help pages.
+
+INSTALLATION
+------------
+
+Please unpack sources under a Web-accessible directory, e.g. /wm/
+Set up the correct owner of the database: chown www-data ./wm/content.db
+Use it as http://you_site.com/wm/
+
+REQUIREMENTS
+------------
+
+The minimum requirement by WebManual is that your Web server supports
+PHP 5.1.0 or above. Web Manual has been tested with Apache and Nginx servers
+on Linux operating systems.
+
+
+WHAT's NEXT
+-----------
+
+Please visit github page of the project website
+for last version and discussion with other users.
+
+http://www.github.com/sundoctor/webmanual
+
+Regards,
+SunDoctor
+
+Remote Assistant Sup.
+
