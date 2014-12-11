@@ -1,5 +1,5 @@
 <?php if (!defined('WEBAPP')) die; ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
@@ -30,10 +30,6 @@ $(document).ready(function(){
 });
 </script>
 
-    <h1><?php echo PROJECT_TITLE; ?></h1>
-    <?php echo view('menu.php'); ?>
-    <hr />
-
 <?php
 
 function nodeview($pid=0) {
@@ -43,13 +39,13 @@ function nodeview($pid=0) {
     $s = '';   
     foreach($db->query($sql) as $row) {
         $t = '<div class="subject"><div><a class="link" href="%s" target="right">%s</a></div></div>';
-        $s .= sprintf($t,'',htmlspecialchars($row['content_title']));
+        $u = 'index.php?cmd=subject&id='.$row['content_id'];
+        $s .= sprintf($t,$u,htmlspecialchars($row['content_title']));
     }
     return $s;
 }
 
 function treeview($pid=0) {
-
     $db = db_connect();
     $sql = "SELECT * FROM topic WHERE topic_pid=%d ORDER BY topic_name";
     $sql = sprintf($sql, $pid);
@@ -70,10 +66,14 @@ function treeview($pid=0) {
     return $r;
 }
 
-echo treeview();
-    
 ?>
 
+    <h1><?php echo PROJECT_TITLE; ?></h1>
+    <?php echo view('menu.php'); ?>
+    <hr />
+    <div class="vblock">
+        <?php echo treeview(); ?>
+    </div>
     <hr />
     <p class="copyright">&copy; 2007-2014 Igor Salnikov</p>
 

@@ -7,6 +7,7 @@ html {
 }
 
 body {
+    height: 80%;
     font-family:Arial, Helvetica, sans-serif;
     font-size: 10pt; 
 }
@@ -15,6 +16,10 @@ h1 {
     font-size: 14pt; 
     font-weight: bold;
     color: #732929;
+}
+
+div.vblock {
+    height: 100%;
 }
 
 ul.mline {

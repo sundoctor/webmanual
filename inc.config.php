@@ -3,9 +3,9 @@ if (!defined('WEBAPP')) die;
 
     // Set config values here
 
-    define('ROOT_LOGIN', 'root');
+    define('ROOT_LOGIN', 'admin');
 
-    define('ROOT_PASSWORD', '123');
+    define('ROOT_PASSWORD', 'admin');
 
     define('PASSWORD_FORMAT', 'clean');
 

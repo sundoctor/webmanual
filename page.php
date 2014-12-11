@@ -7,14 +7,11 @@
     <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
-    <h1>Welcome to the WebManual!</h1>
-    <ul class="mline">
-        <li>WebManual is free opensource system for help building</li>
-    </ul>
+    <h1><?php echo $header; ?></h1>
+    <?php echo view('rmenu.php'); ?>
     <hr />
     <div class="vblock">
-        <p>Hello world!</p>
-        <p>You can change this starting text in file <b><?php echo __FILE__; ?></b></p>
+        <?php echo isset($content)? $content : ''; ?>
     </div>
     <hr />
     <p class="copyright">This page is created with WebManual v0.01</p>

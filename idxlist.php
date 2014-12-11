@@ -1,5 +1,5 @@
 <?php if (!defined('WEBAPP')) die; ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
@@ -15,12 +15,31 @@ $(document).ready(function(){
     });
 });
 </script>
+
+<?php
+
+function listview() {
+    $db = db_connect();
+    $sql = "SELECT content_id, content_title FROM content ORDER BY content_title";
+    $sql = sprintf($sql);
+    $s = '';   
+    foreach($db->query($sql) as $row) {
+        $t = '<div class="subject"><a class="link" href="%s" target="right">%s</a></div>';
+        $u = 'index.php?cmd=subject&id='.$row['content_id'];
+        $s .= sprintf($t, $u, htmlspecialchars($row['content_title']));
+    }
+    return $s;
+}
+
+?>
+
     <h1><?php echo PROJECT_TITLE; ?></h1>
     <?php echo view('menu.php'); ?>
     <hr />
+    <div class="vblock">
     <div class="idxlist">
-        <div class="subject"><a class="link" href="subject1.html" target="right">Содержание 1</a></div>
-        <div class="subject"><a class="link" href="subject2.html" target="right">Содержание 2</a></div>
+        <?php echo listview(); ?>
+    </div>
     </div>
     <hr />
     <p class="copyright">&copy; 2007-2014 Igor Salnikov</p>
