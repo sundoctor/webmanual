@@ -19,4 +19,6 @@ if (!defined('WEBAPP')) die;
     
     define('VERSION', '0.01');
 
+    define('FAST_SQLITE', true);
+
 ?>

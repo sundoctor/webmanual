@@ -19,7 +19,35 @@ function db_connect() {
     static $db = null;
     if ($db!==null) return $db;
     $db = new PDO('sqlite:'.DATABASE_FILE);
+    $sql = 'PRAGMA synchronous=OFF; '.
+           'PRAGMA journal_mode=OFF; '.
+           'PRAGMA temp_store=MEMORY; '.
+           'PRAGMA case_sensitive_like = 0;';
+    if (FAST_SQLITE) $db->exec($sql);
     return $db;
+}
+
+function textrow($id,$withfiles=true) {
+    $db = db_connect();
+    $sql = "SELECT * FROM content WHERE content_id=? LIMIT 1";
+    $sth = $db->prepare($sql); $sth->execute(array($id));
+    while( $row = $sth->fetch(PDO::FETCH_ASSOC)) {
+        if ($withfiles) {
+            // #TODO: preg_replace() for images
+        }
+        return $row;
+    }
+    return null;
+}
+
+function treerow($id) {
+    $db = db_connect();
+    $sql = "SELECT * FROM topic WHERE topic_id=? LIMIT 1";
+    $sth = $db->prepare($sql); $sth->execute(array($id));
+    while( $row = $sth->fetch(PDO::FETCH_ASSOC)) {
+        return $row;
+    }
+    return null;
 }
 
 function _t($s) {
