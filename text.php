@@ -7,7 +7,7 @@ App::mod()->set('text_id',$id);
 
 echo view('page.php', array(
     'pos' => 'right',
-    'header' => 'Subject #'.$id
+    'header' => 'Text #'.$id
     
 ));
 

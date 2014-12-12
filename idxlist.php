@@ -8,7 +8,7 @@ function listview() {
     $s = '';   
     foreach($db->query($sql) as $row) {
         $t = '<div class="subject"><a class="link" href="%s" target="right">%s</a></div>';
-        $u = 'index.php?cmd=subject&id='.$row['content_id'];
+        $u = 'index.php?cmd=text&id='.$row['content_id'];
         $s .= sprintf($t, $u, htmlspecialchars($row['content_title']));
     }
     return '<div class="idxlist">'.$s.'</div>';

@@ -29,7 +29,7 @@ function nodeview($pid=0) {
     $s = '';   
     foreach($db->query($sql) as $row) {
         $t = '<div class="subject"><div><a class="link" href="%s" target="right">%s</a></div></div>'."\n";
-        $u = 'index.php?cmd=subject&id='.$row['content_id'];
+        $u = 'index.php?cmd=text&id='.$row['content_id'];
         $s .= sprintf($t,$u,htmlspecialchars($row['content_title']));
     }
     return $s;
@@ -45,7 +45,7 @@ function treeview($pid=0) {
         $node = nodeview($row['topic_id']);
         $text = $topic.$node;
         $t = '<div><a class="link" href="%s" target="right">%s</a></div>'."\n";
-        $u = 'index.php?cmd=treenode&id='.$row['topic_id'];
+        $u = 'index.php?cmd=node&id='.$row['topic_id'];
         $s = sprintf($t, $u, htmlspecialchars($row['topic_name']));
         $t = '<div class="submenu" style="%s">%s</div>'."\n";
         $display='display:none;';

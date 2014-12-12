@@ -9,11 +9,11 @@ $(document).ready(function(){
     <ul class="mline">
         <li><a href="index.php?cmd=welcome">Home</a> | </li>
         <li><a href="index.php?cmd=favorite">Favorite</a> | </li>
-        <li><a href="index.php?cmd=print&pid=<?php echo App::mod()->get('text_id'); ?>">Print</a></li>
+        <li><a href="index.php?cmd=text-print&pid=<?php echo App::mod()->get('text_id'); ?>">Print</a></li>
 <?php if (isset($_SESSION['login']) && $_SESSION['login']==ROOT_LOGIN): ?>
-        <li>| <a href="index.php?cmd=textedit&pid=<?php echo App::mod()->get('text_id'); ?>">Edit</a></li>
-        <li>| <a href="index.php?cmd=textmove&pid=<?php echo App::mod()->get('text_id'); ?>">Move</a></li>
-        <li>| <a class="delobj" href="index.php?cmd=textdel&pid=<?php echo App::mod()->get('text_id'); ?>">Delete</a></li>
+        <li>| <a href="index.php?cmd=text-edit&pid=<?php echo App::mod()->get('text_id'); ?>">Edit</a></li>
+        <li>| <a href="index.php?cmd=text-move&pid=<?php echo App::mod()->get('text_id'); ?>">Move</a></li>
+        <li>| <a class="delobj" href="index.php?cmd=text-del&pid=<?php echo App::mod()->get('text_id'); ?>">Delete</a></li>
 <?php endif; ?>
     </ul>
  

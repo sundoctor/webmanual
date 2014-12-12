@@ -13,8 +13,8 @@ switch($cmd) {
     case 'welcome': echo view('welcome.php'); break;
     case 'topic': echo view('topic.php'); break;
     case 'idxlist': echo view('idxlist.php'); break;
-    case 'subject': echo view('subject.php'); break;
-    case 'treenode': echo view('treenode.php'); break;
+    case 'text': echo view('text.php'); break;
+    case 'node': echo view('node.php'); break;
     case 'search': echo view('search.php'); break;
     case 'login': include('mod-login.php'); break;
     case 'logout': $_SESSION['login']=''; header('Location: index.php'); break;
