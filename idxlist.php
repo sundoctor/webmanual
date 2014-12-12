@@ -1,12 +1,4 @@
 <?php if (!defined('WEBAPP')) die; ?>
-<!DOCTYPE HTML>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
-    <script type="text/javascript" src="jquery-1.11.1.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css" />
-</head>
-<body>
 <?php
 
 function listview() {
@@ -28,7 +20,7 @@ function listview() {
 echo view('page.php', array(
     'pos' => 'left',
     'header' => PROJECT_TITLE,
-    'content' => $js.listview()
+    'content' => listview()
 ));
 
 ?>

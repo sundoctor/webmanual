@@ -12,7 +12,7 @@
 <body>
 	
     <h1><?php echo $header; ?></h1>
-    <?php echo view($pos=='right'?'rmenu.php':'lmenu.php'); ?>
+    <?php echo view($pos=='right'?'rmenu.php': ($pos=='left'? 'lmenu.php': 'nmenu.php')); ?>
     <hr />
     <div class="vblock">
 	<?php echo isset($content)? $content : ''; ?>

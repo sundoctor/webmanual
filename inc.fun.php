@@ -25,4 +25,21 @@ function db_connect() {
 function _t($s) {
     return $s;
 }
+
+class App {
+    private static $i;
+    public static $reg = array();
+    public static function mod() {
+        if ( empty(self::$i) )
+            self::$i = new self();
+        return self::$i;
+    }
+    public function get($n) {
+        return isset(self::$reg[$n])?self::$reg[$n]:'';
+    }
+    public function set($n,$v) {
+        self::$reg[$n]=$v;
+    }
+}
+
 ?>

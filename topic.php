@@ -45,11 +45,16 @@ function treeview($pid=0) {
         $node = nodeview($row['topic_id']);
         $text = $topic.$node;
         $t = '<div><a class="link" href="%s" target="right">%s</a></div>'."\n";
-        $s = sprintf($t, '', htmlspecialchars($row['topic_name']));
+        $u = 'index.php?cmd=treenode&id='.$row['topic_id'];
+        $s = sprintf($t, $u, htmlspecialchars($row['topic_name']));
         $t = '<div class="submenu" style="%s">%s</div>'."\n";
         $display='display:none;';
+        $test = isset($_SESSION['opened']) && is_array($_SESSION['opened']) &&
+            isset($_SESSION['opened'][$row['topic_id']]);
+        if ($test) $display='';
+        $state=($display==''?'opened':'closed');
         if ($text!='') $s.=sprintf($t,$display,$text);
-        $t = '<div class="topic closed">%s</div>'."\n";
+        $t = '<div class="topic '.$state.'">%s</div>'."\n";
         $s = sprintf($t, $s);
         $r .= $s;
     }

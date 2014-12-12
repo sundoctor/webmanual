@@ -8,9 +8,10 @@ CREATE TABLE topic (
 DROP TABLE IF EXISTS content;
 CREATE TABLE content (
     content_id INTEGER PRIMARY KEY,
-    content_topic_id INTEGER NOT NULL,
+    content_topic_id INTEGER,
     content_title VARCHAR(100) NOT NULL,
-    content_text TEXT
+    content_text TEXT,
+    FOREIGN KEY(content_topic_id) REFERENCES topic(topic_id)
 );
 CREATE INDEX idx_content_title ON content (content_title);
 
