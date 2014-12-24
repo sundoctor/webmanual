@@ -11,9 +11,13 @@ $(document).ready(function(){
         return false;
     });
     $('a.link').click(function(){
-        if ($(this).attr("href")) {
+        if ($(this).attr("href").indexOf("cmd=node")>=0) {
             parent.right.location=$(this).attr("href");
             return true;
+        } else if ($(this).attr("href")) {
+            $.ajax({
+                url: $(this).attr("href")
+            });
         }
     });
 });
@@ -45,7 +49,9 @@ function treeview($pid=0) {
         $node = nodeview($row['topic_id']);
         $text = $topic.$node;
         $t = '<div><a class="link" href="%s" target="right">%s</a></div>'."\n";
-        $u = 'index.php?cmd=node&id='.$row['topic_id'];
+        $u = 'index.php?cmd=switch&id='.$row['topic_id'];
+        if (isset($_SESSION['login']) && $_SESSION['login']==ROOT_LOGIN) 
+            $u = 'index.php?cmd=node&id='.$row['topic_id'];
         $s = sprintf($t, $u, htmlspecialchars($row['topic_name']));
         $t = '<div class="submenu" style="%s">%s</div>'."\n";
         $display='display:none;';

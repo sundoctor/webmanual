@@ -17,7 +17,9 @@ switch($cmd) {
     case 'node': echo view('node.php'); break;
     case 'search': echo view('search.php'); break;
     case 'login': include('mod-login.php'); break;
-    case 'logout': $_SESSION['login']=''; header('Location: index.php'); break;
+    case 'logout': include('mod-logout.php'); break;
+    case 'switch': include('switch.php'); break;
+    case 'text-del': include('mod-text-del.php'); break;
 }
 
 ?>
