@@ -8,6 +8,13 @@
     <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
+<script type="text/javascript">
+$(document).ready(function(){
+    var b=<?php echo (isset($refresh) && $refresh==1?1:0); ?>;
+    if (b) parent.left.location.reload();
+});
+</script>
 <?php echo $content; ?>
 </body>
 </html>
+

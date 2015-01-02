@@ -11,7 +11,8 @@ $(document).ready(function(){
         return false;
     });
     $('a.link').click(function(){
-        if ($(this).attr("href").indexOf("cmd=node")>=0) {
+        if ($(this).attr("href").indexOf("cmd=node")>=0 || 
+            $(this).attr("href").indexOf("cmd=text")>=0) {
             parent.right.location=$(this).attr("href");
             return true;
         } else if ($(this).attr("href")) {

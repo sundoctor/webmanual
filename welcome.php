@@ -14,4 +14,4 @@
     <p class="copyright">This page is created with <?php echo APPLICATION; ?> v<?php echo VERSION; ?></p>
 
 <?php $r = ob_get_contents(); ob_end_clean(); ?>
-<?php echo view('center.php', array('title'=>PROJECT_TITLE, 'content'=>$r)); ?>
+<?php echo view('center.php', array('title'=>PROJECT_TITLE, 'content'=>$r, 'refresh'=>isset($_GET['r'])?1:0)); ?>

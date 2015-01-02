@@ -20,6 +20,8 @@ switch($cmd) {
     case 'logout': include('mod-logout.php'); break;
     case 'switch': include('switch.php'); break;
     case 'text-del': include('mod-text-del.php'); break;
+    case 'text-add': include('mod-text-add.php'); break;
+    case 'text-edit': include('mod-text-edit.php'); break;
 }
 
 ?>
