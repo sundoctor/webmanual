@@ -7,7 +7,7 @@ html {
 }
 
 body {
-	background-color: #fff;
+    background-color: #fff;
     height: 80%;
     font-family:Arial, Helvetica, sans-serif;
     font-size: 10pt; 
@@ -102,7 +102,7 @@ table.login-form {
     margin: 200px auto;
     background-color: #F1F1F1;
     padding: 5px;
-    border: 2px solid #732929;
+    border: 1px dotted #888888;
 }
 
 table.login-form td {
