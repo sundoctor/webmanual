@@ -41,6 +41,11 @@ function textrow($id,$withfiles=true) {
 }
 
 function treerow($id) {
+    if ($id==0) {
+        return array(
+            'topic_name' => 'Root Topic'
+        );
+    }
     $db = db_connect();
     $sql = "SELECT * FROM topic WHERE topic_id=? LIMIT 1";
     $sth = $db->prepare($sql); $sth->execute(array($id));
@@ -48,6 +53,21 @@ function treerow($id) {
         return $row;
     }
     return null;
+}
+
+function treedel($id) {
+    $db = db_connect();
+    $sql = "SELECT * FROM topic WHERE topic_pid=?";
+    $sth = $db->prepare($sql); $sth->execute(array($id));
+    while( $row = $sth->fetch(PDO::FETCH_ASSOC) ) {
+        treedel($row['topic_id']);
+    }
+    $sql = "DELETE FROM content WHERE content_topic_id=?";
+    $sth = $db->prepare($sql);
+    $sth->execute(array($id));
+    $sql = "DELETE FROM topic WHERE topic_id=?";
+    $sth = $db->prepare($sql);
+    $sth->execute(array($id));
 }
 
 function _t($s) {
