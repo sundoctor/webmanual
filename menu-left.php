@@ -19,7 +19,7 @@ $(document).ready(function(){
         <li><a href="index.php?cmd=login" target="_top">Login</a></li>
 <?php endif; ?>
     </ul>
-    <form action="index.php?cmd=topic" method="post" class="search-form" style="display:none;">
+    <form action="index.php?cmd=search" method="post" class="search-form" style="display:none;">
         <input type="text" name="search" size="40" maxlength="100" />
         <input type="submit" value=" Go search! " />
     </form>

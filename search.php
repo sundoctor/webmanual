@@ -3,8 +3,12 @@
 
 function listview() {
     $db = db_connect();
-    $sql = "SELECT content_id, content_title FROM content ORDER BY content_title";
-    $sql = sprintf($sql);
+    $where = '';
+    if (isset($_POST['search']) && is_string($_POST['search'])) {
+        $w = substr($_POST['search'], 0, 100);
+        if (trim($w)!='') $where = sprintf("WHERE content_title LIKE %s", $db->quote("%$w%"));
+    }
+    $sql = "SELECT content_id, content_title FROM content $where ORDER BY content_title";
     $s = '';   
     foreach($db->query($sql) as $row) {
         $t = '<div class="subject"><a class="link" href="%s" target="right">%s</a></div>';

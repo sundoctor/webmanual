@@ -11,6 +11,7 @@ CREATE TABLE content (
     content_topic_id INTEGER,
     content_title VARCHAR(100) NOT NULL,
     content_text TEXT,
+    content_format VARCHAR(5) NOT NULL DEFAULT 'plain',  -- html/tags/wiki
     FOREIGN KEY(content_topic_id) REFERENCES topic(topic_id)
 );
 CREATE INDEX idx_content_title ON content (content_title);

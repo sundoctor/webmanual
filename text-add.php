@@ -31,7 +31,7 @@ $(document).ready(function(){
 <?php
 
 echo view('page.php', array(
-    'pos' => 'node',
+    'menu' => view('menu-right.php'),
     'header' => 'New Text',
     'content' => $r
 ));

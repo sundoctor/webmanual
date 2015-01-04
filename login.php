@@ -1,12 +1,17 @@
 <?php if (!defined('WEBAPP')) die; ?>
 <?php ob_start(); ?>
 
+<script type="text/javascript">
+$(document).ready(function(){
+    $('#login').focus();
+});
+</script>
     <form action="index.php?cmd=login" method="post">
         <table class="login-form">
         <tbody>
         <tr>
             <td>Login:</td>
-            <td><input type="text" name="login" value="<?php echo htmlspecialchars($login); ?>" size="20" maxlength="50" /></td>
+            <td><input type="text" id="login" name="login" value="<?php echo htmlspecialchars($login); ?>" size="20" maxlength="50" /></td>
         </tr>
         <tr>
             <td>Password:</td>

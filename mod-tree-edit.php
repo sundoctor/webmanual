@@ -8,6 +8,7 @@ $test = isset($_POST['id']) && isset($_POST['topic']) &&
 
 if ($test) {
     $id = (int)$_POST['id'];
+    App::mod()->set('topic_id',$id);
     $topic = substr($_POST['topic'],0,100);
     if ($topic!='') {
         $sql = "UPDATE topic SET topic_name=? WHERE topic_id=?";
@@ -21,6 +22,7 @@ if ($test) {
 }
 else {
     $id = isset($_GET['id']) && is_numeric($_GET['id']) ? (int)$_GET['id'] : 0;
+    App::mod()->set('topic_id',$id);
     $row = treerow($id);
     echo view('tree-edit.php', array('id'=>$row['topic_id'], 'topic'=>$row['topic_name']));
 }

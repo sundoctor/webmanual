@@ -19,17 +19,13 @@ $(document).ready(function(){
 </script>
 
     <h1><?php echo $header; ?></h1>
-    <?php echo view($pos=='right'?'menu-right.php': ($pos=='left'? 'menu-left.php': 'menu-node.php')); ?>
+    <?php echo $menu; ?>
     <hr />
     <div class="vblock">
     <?php echo isset($content)? $content : ''; ?>
     </div>
     <hr />
-    <?php if ($pos=='right'): ?>
-    <p class="copyright">This page is created with <?php echo APPLICATION; ?> v<?php echo VERSION; ?></p>
-    <?php else: ?>
-    <p class="copyright">&copy; 2007-<?php echo date('Y'); ?> Igor Salnikov</p>
-    <?php endif; ?>
+    <p class="copyright"><?php echo APPLICATION; ?> v<?php echo VERSION; ?> &copy; 2007-<?php echo date('Y'); ?> Igor Salnikov</p>
     
 </body>
 </html>

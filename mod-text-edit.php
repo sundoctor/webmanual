@@ -8,6 +8,7 @@ $test = isset($_POST['id']) && isset($_POST['title']) && isset($_POST['text']) &
 
 if ($test) {
     $id = (int)$_POST['id'];
+    App::mod()->set('text_id',$id);
     $title = substr($_POST['title'],0,100);
     $text = substr($_POST['text'],0,65000);
     if ($title!='') {
@@ -22,6 +23,7 @@ if ($test) {
 }
 else {
     $id = isset($_GET['id']) && is_numeric($_GET['id']) ? (int)$_GET['id'] : 0;
+    App::mod()->set('text_id',$id);
     $row = textrow($id);
     echo view('text-edit.php', array('id'=>$row['content_id'],
        'title'=>$row['content_title'], 'text'=>$row['content_text']));

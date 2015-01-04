@@ -72,7 +72,7 @@ function treeview($pid=0) {
 <?php
 
 echo view('page.php', array(
-    'pos' => 'left',
+    'menu' => view('menu-left.php'),
     'header' => PROJECT_TITLE,
     'content' => $js.treeview()
 ));

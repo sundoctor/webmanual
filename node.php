@@ -15,7 +15,7 @@ if (!isset($_SESSION['opened'][$id])) $_SESSION['opened'][$id]=true;
 $row = treerow($id);
 
 echo view('page.php', array(
-    'pos' => 'node',
+    'menu' => view('menu-node.php'),
     'refresh' => $refresh,
     'header' => $row['topic_name']
 ));

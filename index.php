@@ -13,9 +13,10 @@ switch($cmd) {
     case 'welcome': echo view('welcome.php'); break;
     case 'topic': echo view('topic.php'); break;
     case 'idxlist': echo view('idxlist.php'); break;
+    case 'search': echo view('search.php'); break;
+    case 'files': echo view('files.php'); break;
     case 'text': echo view('text.php'); break;
     case 'node': echo view('node.php'); break;
-    case 'search': echo view('search.php'); break;
     case 'login': include('mod-login.php'); break;
     case 'logout': include('mod-logout.php'); break;
     case 'switch': include('switch.php'); break;

@@ -27,7 +27,7 @@ $(document).ready(function(){
 <?php
 
 echo view('page.php', array(
-    'pos' => 'node',
+    'menu' => view('menu-node.php'),
     'header' => 'Edit Topic',
     'content' => $r
 ));

@@ -10,6 +10,7 @@ $test = isset($_POST['pid']) && isset($_POST['topic']) &&
 
 if ($test) {
     $pid = (int)$_POST['pid'];
+    App::mod()->set('topic_id',$pid);
     $topic = substr($_POST['topic'],0,100);
     if ($topic!='') {
         $sql = "INSERT INTO topic (topic_pid, topic_name) VALUES (?,?)";
@@ -23,6 +24,7 @@ if ($test) {
     echo view('tree-add.php', array('pid'=>$pid, 'topic'=>$topic));
 }
 else {
+    App::mod()->set('topic_id',$pid);
     echo view('tree-add.php', array('pid'=>$pid));
 }
 
