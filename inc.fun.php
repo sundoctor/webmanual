@@ -27,7 +27,48 @@ function db_connect() {
     return $db;
 }
 
-function textrow($id,$withfiles=true) {
+function file_row($id) {
+    $db = db_conect();
+    $sql = "SELECT * FROM files WHERE file_id=? LIMIT 1";
+    $sth = $db->prepare($sql); $sth->execute(array($id));
+    while( $row = $sth->fetch(PDO::FETCH_ASSOC)) {
+        return $row;
+    }
+    return null;
+}
+
+function file_del($id) {
+    $row = filerow($id);
+    $sql = "DELETE FROM files WHERE file_id=?";
+    $db = db_connect();
+    $c = $db->prepare($sql);
+    $c->execute(array($id));
+}
+
+function file_add($data) {
+    extract($data);
+    $tmpname = $file['tmp_name'];
+    $name = $file['name'];
+    $type = strtolower(substr($file['name'],-3));
+    $sql = "INSERT INTO files (file_path, file_type, file_name) VALUES ('','','');";
+    $db = db_connect();
+    $db->exec($sql);
+    $id = $db->lastInsertId();
+    $newname = '/'.$id.'.'.$type;
+    $sql = "UPDATE files SET file_path=?, file_type=?, file_name=? WHERE file_id=?";
+    $sth = $db->prepare($sql);
+    $sth->execute(array($newname, $type, $name, $id));
+    move_uploaded_file($tmpname, UPLOAD_PATH.$newname);
+    return $id;
+}
+
+function check_upload($filename) {
+    $ext = strtolower(substr($filename,-3));
+    $arr = explode(',', UPLOAD_FILES);
+    return in_array($ext, $arr) && (strpos($filename,'.')!==false);
+}
+
+function text_row($id,$withfiles=true) {
     $db = db_connect();
     $sql = "SELECT * FROM content WHERE content_id=? LIMIT 1";
     $sth = $db->prepare($sql); $sth->execute(array($id));
@@ -40,7 +81,31 @@ function textrow($id,$withfiles=true) {
     return null;
 }
 
-function treerow($id) {
+function text_del($id) {
+    $sql = "DELETE FROM content WHERE content_id=?";
+    $db = db_connect();
+    $c = $db->prepare($sql);
+    $c->execute(array($id));
+}
+
+function text_edit($id, $data) {
+    extract($data);
+    $sql = "UPDATE content SET content_title=?, content_text=?, content_format=? WHERE content_id=?";
+    $db = db_connect();
+    $c = $db->prepare($sql);
+    $c->execute(array($title, $text, $format, $id));
+}
+
+function text_add($data) {
+    extract($data);
+    $sql = "INSERT INTO content (content_topic_id, content_title, content_text, content_format) VALUES (?,?,?,?)";
+    $db = db_connect();
+    $c = $db->prepare($sql);
+    $c->execute(array($pid, $title, $text,$format));
+    return $db->lastInsertId();
+}
+
+function tree_row($id) {
     if ($id==0) {
         return array(
             'topic_name' => 'Root Topic'
@@ -55,7 +120,7 @@ function treerow($id) {
     return null;
 }
 
-function treedel($id) {
+function tree_del($id) {
     $db = db_connect();
     $sql = "SELECT * FROM topic WHERE topic_pid=?";
     $sth = $db->prepare($sql); $sth->execute(array($id));
@@ -68,6 +133,23 @@ function treedel($id) {
     $sql = "DELETE FROM topic WHERE topic_id=?";
     $sth = $db->prepare($sql);
     $sth->execute(array($id));
+}
+
+function tree_edit($id, $data) {
+    extract($data);
+    $sql = "UPDATE topic SET topic_name=? WHERE topic_id=?";
+    $db = db_connect();
+    $c = $db->prepare($sql);
+    $c->execute(array($topic, $id));
+}
+
+function tree_add($data) {
+    extract($data);
+    $sql = "INSERT INTO topic (topic_pid, topic_name) VALUES (?,?)";
+    $db = db_connect();
+    $c = $db->prepare($sql);
+    $c->execute(array($pid, $topic));
+    return $db->lastInsertId();
 }
 
 function _t($s) {

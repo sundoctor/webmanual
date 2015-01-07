@@ -12,7 +12,7 @@ if (!isset($_SESSION['opened'])) $_SESSION['opened'] = array();
 if (!isset($_SESSION['opened'][$id])) $_SESSION['opened'][$id]=true;
     else unset($_SESSION['opened'][$id]);
 
-$row = treerow($id);
+$row = tree_row($id);
 
 echo view('page.php', array(
     'menu' => view('menu-node.php'),

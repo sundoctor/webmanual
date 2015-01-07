@@ -9,7 +9,9 @@ if (!defined('WEBAPP')) die;
 
     define('PASSWORD_FORMAT', 'clean');
 
-    define('UPLOAD_FILES', 'zip,jpg,gif,png');
+    define('UPLOAD_FILES', 'zip,jpg,gif,png,txt');
+
+    define('UPLOAD_PATH', dirname(__FILE__));
 
     define('DATABASE_FILE', dirname(__FILE__).'/content.db');
 

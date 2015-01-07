@@ -13,11 +13,7 @@ if ($test) {
     App::mod()->set('topic_id',$pid);
     $topic = substr($_POST['topic'],0,100);
     if ($topic!='') {
-        $sql = "INSERT INTO topic (topic_pid, topic_name) VALUES (?,?)";
-        $db = db_connect();
-        $c = $db->prepare($sql);
-        $c->execute(array($pid, $topic));
-        $id = $db->lastInsertId();
+        $id = tree_add(array('topic'=>$topic));
         header('Location: index.php?cmd=node&id='.$id.'&r=1');
         exit;
     }

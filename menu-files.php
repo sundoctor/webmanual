@@ -9,7 +9,7 @@ $(document).ready(function(){
     <ul class="mline">
         <li><a href="index.php?cmd=welcome">Home</a></li>
 <?php if (isset($_SESSION['login']) && $_SESSION['login']==ROOT_LOGIN): ?>
-        <li>| <a href="index.php?cmd=files-add">Add file</a></li>
+        <li>| <a href="index.php?cmd=file-add">Add file</a></li>
 <?php endif; ?>
     </ul>
  

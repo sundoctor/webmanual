@@ -11,10 +11,7 @@ if ($test) {
     App::mod()->set('topic_id',$id);
     $topic = substr($_POST['topic'],0,100);
     if ($topic!='') {
-        $sql = "UPDATE topic SET topic_name=? WHERE topic_id=?";
-        $db = db_connect();
-        $c = $db->prepare($sql);
-        $c->execute(array($topic, $id));
+        tree_edit($id, array('topic'=>$topic));
         header('Location: index.php?cmd=node&id='.$id.'&r=1');
         exit;
     }
@@ -23,7 +20,7 @@ if ($test) {
 else {
     $id = isset($_GET['id']) && is_numeric($_GET['id']) ? (int)$_GET['id'] : 0;
     App::mod()->set('topic_id',$id);
-    $row = treerow($id);
+    $row = tree_row($id);
     echo view('tree-edit.php', array('id'=>$row['topic_id'], 'topic'=>$row['topic_name']));
 }
 

@@ -6,7 +6,8 @@ session_start();
 require_once('inc.config.php');
 require_once('inc.fun.php');
 
-$cmd = isset($_REQUEST['cmd']) && is_string($_REQUEST['cmd'])? substr($_REQUEST['cmd'],0,10) : 'frame';
+$cmd = isset($_REQUEST['cmd']) && is_string($_REQUEST['cmd'])?
+   substr($_REQUEST['cmd'],0,10) : 'frame';
 
 switch($cmd) {
     case 'frame': echo view('frame.php'); break;
@@ -26,6 +27,9 @@ switch($cmd) {
     case 'tree-del': include('mod-tree-del.php'); break;
     case 'tree-add': include('mod-tree-add.php'); break;
     case 'tree-edit': include('mod-tree-edit.php'); break;
+    case 'file-del': include('mod-file-del.php'); break;
+    case 'file-add': include('mod-file-add.php'); break;
+    case 'file-get': include('mod-file-get.php'); break;
 }
 
 ?>

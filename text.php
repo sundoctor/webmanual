@@ -5,7 +5,7 @@ $id = isset($_GET['id']) && is_numeric($_GET['id'])? $_GET['id'] : 1;
 
 $refresh = isset($_GET['r']) && $_GET['r']==1? 1: 0;
 
-$row = textrow($id);
+$row = text_row($id);
 
 App::mod()->set('text_id',$id);
 

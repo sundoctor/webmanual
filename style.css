@@ -114,3 +114,28 @@ table.login-form input:text {
     width: 100%;
 }
 
+div.files table {
+    width: 80%;
+}
+
+div.files table th {
+    border-top: 1px dotted #d0d0d0;
+    border-bottom: 1px dotted #d0d0d0;
+    text-align: left;
+    padding: 7px;
+}
+
+div.files table td {
+    border-bottom: 1px dotted #d0d0d0;
+    padding: 5px;
+}
+
+div.files a {
+    text-decoration: none;
+}
+
+div.files td.col1 {
+    color: green;
+    font-family: Monospace, "Courier New";
+    font-size: 11px;
+}

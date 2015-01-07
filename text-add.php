@@ -20,6 +20,11 @@ $(document).ready(function(){
             <td><textarea name="text" cols="70" rows="15"><?php echo isset($text)?htmlspecialchars($text):''; ?></textarea></td>
         </tr>
         <tr>
+            <td>Format:</td>
+            <td><input type="radio" name="format" value="plain" <?php echo (isset($format) && $format=='plain'? 'checked="yes"' : ''); ?>/>plain  
+                <input type="radio" name="format" value="html" <?php echo (isset($format) && $format=='html'? 'checked="yes"' : ''); ?>/>html</td>
+        </tr>
+        <tr>
             <td>&nbsp;</td>
             <td><input type="submit" value=" Submit " /></td>
         </tr>
