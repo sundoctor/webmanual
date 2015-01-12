@@ -21,7 +21,10 @@ CREATE TABLE files (
     file_id INTEGER PRIMARY KEY,
     file_path VARCHAR(100) NOT NULL,
     file_type VARCHAR(20) NOT NULL,
-    file_name VARCHAR(100) NOT NULL
+    file_name VARCHAR(100) NOT NULL,
+    file_size INTEGER NOT NULL DEFAULT 0,
+    file_sx INTEGER NOT NULL DEFAULT 0,
+    file_sy INTEGER NOT NULL DEFAULT 0
 );
 
 INSERT INTO topic (topic_pid, topic_name) VALUES (0, 'First Topic');

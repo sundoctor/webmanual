@@ -119,10 +119,9 @@ div.files table {
 }
 
 div.files table th {
-    border-top: 1px dotted #d0d0d0;
     border-bottom: 1px dotted #d0d0d0;
     text-align: left;
-    padding: 7px;
+    padding: 3px;
 }
 
 div.files table td {

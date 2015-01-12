@@ -28,17 +28,18 @@ function db_connect() {
 }
 
 function file_row($id) {
-    $db = db_conect();
+    $db = db_connect();
     $sql = "SELECT * FROM files WHERE file_id=? LIMIT 1";
     $sth = $db->prepare($sql); $sth->execute(array($id));
-    while( $row = $sth->fetch(PDO::FETCH_ASSOC)) {
+    while( $row = $sth->fetch(PDO::FETCH_ASSOC))
         return $row;
-    }
     return null;
 }
 
 function file_del($id) {
-    $row = filerow($id);
+    $row = file_row($id);
+    $f = UPLOAD_PATH.$row['file_path'];
+    if (file_exists($f)) unlink($f);
     $sql = "DELETE FROM files WHERE file_id=?";
     $db = db_connect();
     $c = $db->prepare($sql);
@@ -47,17 +48,22 @@ function file_del($id) {
 
 function file_add($data) {
     extract($data);
+    if ($file['error']!=0) return 0;
     $tmpname = $file['tmp_name'];
+    $size = @filesize($tmpname);
     $name = $file['name'];
-    $type = strtolower(substr($file['name'],-3));
+    $type = strtolower(substr($name,-3));
+    $width = $height = 0;
+    if (in_array($type, array('gif','png','jpg'))) 
+        list($width, $height, $t, $a) = getimagesize($tmpname);
     $sql = "INSERT INTO files (file_path, file_type, file_name) VALUES ('','','');";
     $db = db_connect();
     $db->exec($sql);
     $id = $db->lastInsertId();
     $newname = '/'.$id.'.'.$type;
-    $sql = "UPDATE files SET file_path=?, file_type=?, file_name=? WHERE file_id=?";
+    $sql = "UPDATE files SET file_path=?, file_type=?, file_name=?, file_size=?, file_sx=?, file_sy=? WHERE file_id=?";
     $sth = $db->prepare($sql);
-    $sth->execute(array($newname, $type, $name, $id));
+    $sth->execute(array($newname, $type, $name, $size, $width, $height, $id));
     move_uploaded_file($tmpname, UPLOAD_PATH.$newname);
     return $id;
 }

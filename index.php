@@ -29,7 +29,7 @@ switch($cmd) {
     case 'tree-edit': include('mod-tree-edit.php'); break;
     case 'file-del': include('mod-file-del.php'); break;
     case 'file-add': include('mod-file-add.php'); break;
-    case 'file-get': include('mod-file-get.php'); break;
+    case 'file-get': include('file-get.php'); break;
 }
 
 ?>
