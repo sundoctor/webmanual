@@ -5,21 +5,22 @@ $(document).ready(function(){
     $('.topic').click(function(){
         $(this).toggleClass('closed opened');
         $(this).children('.submenu').toggle();
+        $.ajax({
+            url: $(this).attr("url")
+        });
         return false;
     });
     $('.submenu').click(function(){
         return false;
     });
-    $('a.link').click(function(){
+    $('a.link').click(function(event){
+        event.stopPropagation();
         if ($(this).attr("href").indexOf("cmd=node")>=0 || 
             $(this).attr("href").indexOf("cmd=text")>=0) {
             parent.right.location=$(this).attr("href");
             return true;
-        } else if ($(this).attr("href")) {
-            $.ajax({
-                url: $(this).attr("href")
-            });
-        }
+        } else 
+            return false;
     });
 });
 </script>
@@ -50,7 +51,7 @@ function treeview($pid=0) {
         $node = nodeview($row['topic_id']);
         $text = $topic.$node;
         $t = '<div><a class="link" href="%s" target="right">%s</a></div>'."\n";
-        $u = 'index.php?cmd=switch&id='.$row['topic_id'];
+        $usw = 'index.php?cmd=switch&id='.$row['topic_id']; $u='';
         if (isset($_SESSION['login']) && $_SESSION['login']==ROOT_LOGIN) 
             $u = 'index.php?cmd=node&id='.$row['topic_id'];
         $s = sprintf($t, $u, htmlspecialchars($row['topic_name']));
@@ -61,8 +62,8 @@ function treeview($pid=0) {
         if ($test) $display='';
         $state=($display==''?'opened':'closed');
         if ($text!='') $s.=sprintf($t,$display,$text);
-        $t = '<div class="topic '.$state.'">%s</div>'."\n";
-        $s = sprintf($t, $s);
+        $t = '<div class="topic '.$state.'" url="%s">%s</div>'."\n";
+        $s = sprintf($t, $usw, $s);
         $r .= $s;
     }
     return $r;
