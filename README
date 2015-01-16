@@ -1,8 +1,21 @@
-Web Manual
+WebManual
 =============================
 
-Thank you for choosing Web Manual - opensource software
+Thank you for choosing WebManual - opensource software
 written on PHP for building structured internet help pages.
+
+- It was made very simple - to copy & run in one click.
+- No special setup is needed.
+- See all of the options in 'inc.config.php'
+- Be free to callback author by e-mail.
+
+WebManual is a free engine, it's interface similar to well
+known CHM help files, used in Windows and Linux.
+
+WebManual allows online text edition with
+files and images insertion. It supports text/plain and
+text/html formats.
+
 
 INSTALLATION
 ------------
@@ -11,8 +24,17 @@ Please unpack sources under a Web-accessible directory, e.g. /wm/
 Set up the correct owner of the database: chown www-data ./wm/content.db
 Use it as http://you_site.com/wm/
 
+You can also limit the access to 'content.db' file in your apache '.htaccess'
+
+
 REQUIREMENTS
 ------------
+
+- Linux/Windows
+- Apache/Nginx/Lighttpd
+- PHP
+- Sqlite
+- Chrome/Firefox/Opera
 
 The minimum requirement by WebManual is that your Web server supports
 PHP 5.1.0 or above. Web Manual has been tested with Apache and Nginx servers
