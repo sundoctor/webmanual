@@ -13,6 +13,8 @@ if (!defined('WEBAPP')) die;
 
     define('UPLOAD_PATH', dirname(__FILE__));
 
+    define('FILE_URLPREFIX', '');
+
     define('DATABASE_FILE', dirname(__FILE__).'/content.db');
 
     define('PROJECT_TITLE', 'WebManual v0.01');

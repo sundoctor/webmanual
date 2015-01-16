@@ -14,7 +14,7 @@ echo view('page.php', array(
     'menu' => view('menu-right.php'),
     'refresh' => $refresh,
     'header' => htmlspecialchars($row['content_title']), 
-    'content' => htmlspecialchars($row['content_text'])
+    'content' => $row['content']
 ));
 
 ?>

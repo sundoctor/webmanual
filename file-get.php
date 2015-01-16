@@ -16,7 +16,7 @@ if ($id>0) {
             header('Content-Disposition: attachment; filename="'.$row['file_name'].'"');
             header('Content-Length: ' . $row['file_size']);
         }
-        $fn = UPLOAD_PATH.$row['file_path'];
+        $fn = UPLOAD_PATH.'/'.$row['file_path'];
         if ($f=fopen($fn,'rb')) {
             fpassthru($f);
             fclose($f);

@@ -24,9 +24,11 @@ switch($cmd) {
     case 'text-del': include('mod-text-del.php'); break;
     case 'text-add': include('mod-text-add.php'); break;
     case 'text-edit': include('mod-text-edit.php'); break;
+    case 'text-move': include('mod-text-move.php'); break;
     case 'tree-del': include('mod-tree-del.php'); break;
     case 'tree-add': include('mod-tree-add.php'); break;
     case 'tree-edit': include('mod-tree-edit.php'); break;
+    case 'tree-move': include('mod-tree-move.php'); break;
     case 'file-del': include('mod-file-del.php'); break;
     case 'file-add': include('mod-file-add.php'); break;
     case 'file-get': include('file-get.php'); break;

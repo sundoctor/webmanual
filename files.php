@@ -14,13 +14,14 @@ function listfiles() {
             $cols = array('template','filename','filesize','dimension','remove?');
             $s.='<tr>'.implode('', array_map(function ($i) { return '<th>'.$i.'</th>';}, $cols)).'</tr>';
         }
-        $t = '<tr><td class="col1">{file#%s}</td>'.
+        $t = '<tr><td class="col1">{%s#%s}</td>'.
             '<td><a href="%s" target="_blank">%s</a></td>'.
             '<td>%s</td><td>%s</td>'.
             '<td><a class="delobj" href="%s">remove</a></td></tr>';
         $u = 'index.php?cmd=file-get&id='.$row['file_id'];
         $d = 'index.php?cmd=file-del&id='.$row['file_id'];
-        $s .= sprintf($t, $row['file_id'], $u, htmlspecialchars($row['file_path']), 
+        $p = in_array($row['file_type'], array('jpg','gif','png'))? 'img':'file';
+        $s .= sprintf($t, $p, $row['file_id'], $u, htmlspecialchars($row['file_path']), 
             $row['file_size'], $row['file_sx'].'x'.$row['file_sy'],$d);
     }
     if ($c>0) $s.='</table>';
