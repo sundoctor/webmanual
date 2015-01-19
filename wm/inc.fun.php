@@ -95,6 +95,11 @@ function format_content($row) {
         $n = FILE_URLPREFIX.$r['file_path'];
         return sprintf('<a href="%s" class="file">%s</a>', $n, $r['file_path']);
     }, $row['content']);
+    $row['content'] = preg_replace_callback('/{link#(.+)}/', function ($m) {
+        if (stripos($m[1],'http')===0)
+            return sprintf('<a href="%s" class="file" target="_blank">%s</a>', $m[1], $m[1]);
+        return sprintf('<a href="%s" class="file">%s</a>', $m[1], $m[1]);
+    }, $row['content']);
     return $row;
 }
 

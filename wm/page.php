@@ -25,7 +25,7 @@ $(document).ready(function(){
     <?php echo isset($content)? $content : ''; ?>
     </div>
     <hr />
-    <p class="copyright"><?php echo APPLICATION; ?> v<?php echo VERSION; ?> &copy; 2007-<?php echo date('Y'); ?> Igor Salnikov</p>
+    <p class="copyright"><?php echo APPLICATION; ?> v<?php echo VERSION; ?> &copy; 2007-<?php echo date('Y'); ?> Igor Salnikov aka SunDoctor</p>
     
 </body>
 </html>
