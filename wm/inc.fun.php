@@ -117,7 +117,7 @@ function format_content($row) {
 				$su=substr($rs,strpos($rs,$c)+1);
 				try {
 					$count = 0;
-					$t[$k] = preg_replace($r, $su, $t[$k], -1, $count);
+					$t[$k] = preg_replace($r, $su, rtrim($t[$k]), -1, $count);
 					if ($count>0) break;
 				} catch(Exception $e) {}
 			}
