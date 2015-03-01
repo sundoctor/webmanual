@@ -101,30 +101,32 @@ function format_content($row) {
         break;
     }
     
-    $re=array(); $t=explode("\n",$row['content']);
+    $re=array(); $su=array(); $t=explode("\n",$row['content']);
     foreach($t as $k=>$s) {
 		if (preg_match('/{regexp#[^}]+}/',$s)) {
-			$re[]=trim($s); unset($t[$k]);
+			$rx=trim($s); unset($t[$k]);
+			$rs = substr($rx,8,-1);
+			$c='#';
+			if ($rs{0}=='@' || $rs{0}=='/') $c=$rs{0};
+			$rk=$c.substr($rs,0,strpos($rs,$c)).$c.'e';
+			$sk=substr($rs,strpos($rs,$c)+1);
+			$re[]=$rk; $su[]=$sk;
+
 		}
 		else if (preg_match('@{/?[a-z]+#[^}]*}@',$s)) {
 			continue;
 		} else {
-			foreach($re as $rx) {
-				$rs = substr($rx,8,-1);
-				$c='#';
-				if ($rs{0}=='@' || $rs{0}=='/') $c=$rs{0};
-				$r=$c.substr($rs,0,strpos($rs,$c)).$c.'e';
-				$su=substr($rs,strpos($rs,$c)+1);
-				try {
-					$count = 0;
-					$t[$k] = preg_replace($r, $su, rtrim($t[$k]), -1, $count);
-					if ($count>0) break;
-				} catch(Exception $e) {}
-			}
+			$count = 0;
+			$t[$k] = preg_replace($re, $su, rtrim($t[$k]), -1, $count);
 		}
 	}
 	$row['content']=implode("\n",$t);
 	
+    $row['content'] = preg_replace_callback('@{block#(#[0-9a-fA-F]+)}(.+){/block#}@s', function ($m) {
+        $c = $m[1]; $t = trim($m[2]);
+        return '<span class="block" style="background-color:'.$c.';">'.$t.'</span>';
+    }, $row['content']);
+    
     $row['content'] = preg_replace_callback('@{cols#(\d+)}(.+){/cols#}@s', function ($m) {
         $n = $m[1]; $r = trim($m[2]); $a = explode("\n",$r); $s = ceil(count($a)/$n);
         $t='<table class="list"><tr>';

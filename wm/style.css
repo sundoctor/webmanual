@@ -152,3 +152,16 @@ table.list tr td {
 	padding: 15px;
     vertical-align: top;
 }
+
+span.block {
+	padding: 6px;
+ 
+    display: -moz-inline-stack; /* ← Firefox 2 backwards compatibility */
+    display: inline-block;
+    vertical-align: top;
+ 
+    /* ↓ IE6 & IE7 «hasLayout» voodoo */
+    zoom: 1;
+    *display: inline;
+    /* ↑ IE6 & IE7 starhack ← http://www.ejeliot.com/blog/63 */
+}
