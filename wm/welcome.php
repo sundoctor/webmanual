@@ -11,7 +11,7 @@
         <p>You can change this starting text in file <b><?php echo __FILE__; ?></b></p>
     </div>
     <hr />
-    <p class="copyright">This page is created with <?php echo APPLICATION; ?> v<?php echo VERSION; ?></p>
+    <p class="copyright">This page is created with WebManual</p>
 
 <?php $r = ob_get_contents(); ob_end_clean(); ?>
 <?php echo view('center.php', array('title'=>PROJECT_TITLE, 'content'=>$r, 'refresh'=>isset($_GET['r'])?1:0)); ?>
