@@ -78,11 +78,21 @@ function check_upload($filename) {
     return in_array($ext, $arr) && (strpos($filename,'.')!==false);
 }
 
+function color($m,$c) {
+	return '<span style="color:'.$c.';">'.$m.'</span>';
+}
+
+function bold($m) {
+	return '<b>'.$m.'</b>';
+}
+
 function format_content($row) {
     $row['content'] = $row['content_text'];
+
     switch ($row['content_format']) {
     case 'plain':
-        $row['content'] = '<pre>'.htmlspecialchars($row['content']).'</pre>';
+        $row['content'] = htmlspecialchars($row['content']);
+        $row['content'] = str_replace('&quot;','"',$row['content']);
         break;
     case 'html':
         if (stripos($row['content'],'<br>')==false &&
@@ -90,7 +100,32 @@ function format_content($row) {
                 $row['content'] = str_replace("\n","<br/>\n",$row['content']);
         break;
     }
-    $row['content'] = preg_replace_callback('@{cols#(\d+)}(.+){/cols}@s', function ($m) {
+    
+    $re=array(); $t=explode("\n",$row['content']);
+    foreach($t as $k=>$s) {
+		if (preg_match('/{regexp#[^}]+}/',$s)) {
+			$re[]=trim($s); unset($t[$k]);
+		}
+		else if (preg_match('@{/?[a-z]+#[^}]*}@',$s)) {
+			continue;
+		} else {
+			foreach($re as $rx) {
+				$rs = substr($rx,8,-1);
+				$c='#';
+				if ($rs{0}=='@' || $rs{0}=='/') $c=$rs{0};
+				$r=$c.substr($rs,0,strpos($rs,$c)).$c.'e';
+				$su=substr($rs,strpos($rs,$c)+1);
+				try {
+					$count = 0;
+					$t[$k] = preg_replace($r, $su, $t[$k], -1, $count);
+					if ($count>0) break;
+				} catch(Exception $e) {}
+			}
+		}
+	}
+	$row['content']=implode("\n",$t);
+	
+    $row['content'] = preg_replace_callback('@{cols#(\d+)}(.+){/cols#}@s', function ($m) {
         $n = $m[1]; $r = trim($m[2]); $a = explode("\n",$r); $s = ceil(count($a)/$n);
         $t='<table class="list"><tr>';
         for($i=0;$i<count($a);$i+=$s) {
@@ -104,16 +139,21 @@ function format_content($row) {
         $r = file_row($m[1]); if ($r===null) return '';
         return sprintf('<img src="%s" class="file"/>', FILE_URLPREFIX.$r['file_path']);
     }, $row['content']);
+    
     $row['content'] = preg_replace_callback('@{file#(\d+)}@', function ($m) {
         $r = file_row($m[1]); if ($r===null) return '';
         $n = FILE_URLPREFIX.$r['file_path'];
         return sprintf('<a href="%s" class="file">%s</a>', $n, $r['file_path']);
     }, $row['content']);
+    
     $row['content'] = preg_replace_callback('@{link#(.+)}@', function ($m) {
         if (stripos($m[1],'http')===0)
             return sprintf('<a href="%s" class="file" target="_blank">%s</a>', $m[1], $m[1]);
         return sprintf('<a href="%s" class="file">%s</a>', $m[1], $m[1]);
     }, $row['content']);
+    
+    if ($row['content_format']=='plain')
+		$row['content']='<pre>'.$row['content'].'</pre>';
     return $row;
 }
 
