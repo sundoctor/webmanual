@@ -8,6 +8,6 @@ if (!isset($_SESSION['opened'])) $_SESSION['opened'] = array();
 if (!isset($_SESSION['opened'][$id])) $_SESSION['opened'][$id]=true;
     else unset($_SESSION['opened'][$id]);
 
-echo jsonencode(array());
+echo json_encode(array());
 
 ?>

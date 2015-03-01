@@ -13,7 +13,7 @@ if ($test) {
     App::mod()->set('topic_id',$pid);
     $topic = substr($_POST['topic'],0,100);
     if ($topic!='') {
-        $id = tree_add(array('topic'=>$topic));
+        $id = tree_add(array('topic'=>$topic,'pid'=>$pid));
         header('Location: index.php?cmd=node&id='.$id.'&r=1');
         exit;
     }

@@ -1,5 +1,7 @@
 <?php
 if (!defined('WEBAPP')) die;
+if (!defined('SQLITE_DEBUG'))
+	define('SQLITE_DEBUG',true);
 
 function view() {
     $args = func_get_args();
@@ -24,6 +26,8 @@ function db_connect() {
            'PRAGMA temp_store=MEMORY; '.
            'PRAGMA case_sensitive_like = 0;';
     if (FAST_SQLITE) $db->exec($sql);
+    if (SQLITE_DEBUG)
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     return $db;
 }
 
@@ -115,34 +119,105 @@ function text_row($id) {
 }
 
 function text_move($id, $to) {
-    $sql = "UPDATE content SET content_topic_id=? WHERE content_id=?";
     $db = db_connect();
+    $db->exec('BEGIN TRANSACTION');
+
+	$sql = "SELECT COALESCE(MAX(content_seq),0)+1 AS seq FROM content WHERE content_topic_id=?";
     $c = $db->prepare($sql);
-    $c->execute(array($to, $id));
+    $c->execute(array($to));
+    $rows = $c->fetchAll(PDO::FETCH_ASSOC);
+    $newseq = $rows[0]['seq'];
+    
+    $sql = "SELECT * FROM content WHERE content_id=?";
+    $c = $db->prepare($sql);
+    $c->execute(array($id));
+    $rows = $c->fetchAll(PDO::FETCH_ASSOC);
+    $oldseq = $rows[0]['content_seq'];
+    $oldpid = $rows[0]['content_topic_id'];
+    
+    $sql = "UPDATE content SET content_topic_id=?,content_seq=? WHERE content_id=?";
+    $c = $db->prepare($sql);
+    $c->execute(array($to, $newseq, $id));
+    
+    $sql = "UPDATE content SET content_seq=content_seq-1 WHERE content_topic_id=? AND content_seq>?";
+    $c = $db->prepare($sql);
+    $c->execute(array($oldpid, $oldseq));
+    
+    $db->exec('COMMIT TRANSACTION');
 }
 
 function text_del($id) {
-    $sql = "DELETE FROM content WHERE content_id=?";
     $db = db_connect();
+    
+    $db->exec('BEGIN TRANSACTION');
+	$sql = "SELECT content_topic_id, content_seq FROM content WHERE content_id=?";
+	$sth = $db->prepare($sql);
+	$sth->execute(array($id));
+	$rows = $sth->fetchAll(PDO::FETCH_ASSOC);
+	$pid = $rows[0]['content_topic_id'];
+	$seq = $rows[0]['content_seq'];
+	
+    $sql = "DELETE FROM content WHERE content_id=?";
     $c = $db->prepare($sql);
     $c->execute(array($id));
+    
+	$sql = "UPDATE content SET content_seq=content_seq-1 WHERE content_topic_id=? AND content_seq>?";
+	$sth = $db->prepare($sql);
+	$sth->execute(array($pid,$seq));
+	$db->exec('COMMIT TRANSACTION');
 }
 
 function text_edit($id, $data) {
     extract($data);
-    $sql = "UPDATE content SET content_title=?, content_text=?, content_format=? WHERE content_id=?";
+    
+    $db = db_connect();
+    $db->exec('BEGIN TRANSACTION');
+    $sql = "SELECT * FROM content WHERE content_id=?";
+    $c = $db->prepare($sql);
+    $c->execute(array($id));
+    $rows = $c->fetchAll(PDO::FETCH_ASSOC);
+    $pid = $rows[0]['content_topic_id'];
+    $oldseq = $rows[0]['content_seq'];
+    $sql = "SELECT COALESCE(MIN(content_seq),0) as min, COALESCE(MAX(content_seq),0) as max".
+		   " FROM content WHERE content_topic_id=?";
+	$c = $db->prepare($sql);
+	$c->execute(array($pid));
+	$rows = $c->fetchAll(PDO::FETCH_ASSOC);
+	$min = $rows[0]['min'];
+	$max = $rows[0]['max'];
+	if ($min==0) $seq = 1; else {
+		if ($seq<$min) $seq = 1;
+		else if ($seq>$max) $seq=$max;
+	}
+	$sql = "UPDATE content SET content_seq=content_seq-1 WHERE content_topic_id=? AND content_seq>=?";
+	$c = $db->prepare($sql);
+	$c->execute(array($pid, $oldseq));
+	$sql = "UPDATE content SET content_seq=content_seq+1 WHERE content_topic_id=? AND content_seq>=?";
+	$c = $db->prepare($sql);
+	$c->execute(array($pid, $seq));
+    $sql = "UPDATE content SET content_title=?, content_text=?, content_format=?, content_seq=? WHERE content_id=?";
     $db = db_connect();
     $c = $db->prepare($sql);
-    $c->execute(array($title, $text, $format, $id));
+    $c->execute(array($title, $text, $format, $seq, $id));
+    $db->exec('COMMIT TRANSACTION');
+    
 }
 
 function text_add($data) {
     extract($data);
-    $sql = "INSERT INTO content (content_topic_id, content_title, content_text, content_format) VALUES (?,?,?,?)";
     $db = db_connect();
+    $db->exec('BEGIN TRANSACTION');
+    $sql = "SELECT COALESCE(MAX(content_seq),0)+1 AS seq FROM content WHERE content_topic_id=?";
     $c = $db->prepare($sql);
-    $c->execute(array($pid, $title, $text,$format));
-    return $db->lastInsertId();
+    $c->execute(array($pid));
+    $row = $c->fetchAll(PDO::FETCH_ASSOC);
+    $seq = $row[0]['seq'];
+    $sql = "INSERT INTO content (content_topic_id, content_seq, content_title, content_text, content_format) VALUES (?,?,?,?,?)";
+    $c = $db->prepare($sql);
+    $c->execute(array($pid, $seq, $title, $text,$format));
+    $last_id = $db->lastInsertId();
+    $db->exec('COMMIT TRANSACTION');
+    return $last_id;
 }
 
 function tree_row($id) {
@@ -160,16 +235,19 @@ function tree_row($id) {
     return null;
 }
 
-function tree_list($pid=0, $sel=0, $cur=0) {
+function tree_list($pid=0, $sel=0, $cur=0, $showroot=true) {
     $db = db_connect();
-    $sql = "SELECT * FROM topic WHERE topic_pid=? ORDER BY topic_name";
+    $sql = "SELECT * FROM topic WHERE topic_pid=? ORDER BY topic_seq";
     $sth = $db->prepare($sql); $sth->execute(array($pid));
     $c=0; $s='';
     while( $row = $sth->fetch(PDO::FETCH_ASSOC) ) {
         $c++;
         if ($c==1) {
             if ($pid==0) {
-                $t = '<input type="radio" name="to" value="0"%s/> /root';
+				if ($showroot)
+					$t = '<input type="radio" name="to" value="0"%s/> /root';
+				else
+					$t = '<input type="radio" name="to" value="0" disabled="yes"%s/> /root';
                 $s.= sprintf($t, $sel==0?' checked="yes"':'');
                 $s.='<ul class="tree">';
             } else
@@ -191,42 +269,109 @@ function tree_list($pid=0, $sel=0, $cur=0) {
 }
 
 function tree_move($id, $to) {
-    $sql = "UPDATE topic SET topic_pid=? WHERE topic_id=?";
     $db = db_connect();
+    $db->exec('BEGIN TRANSACTION');
+    
+    $sql = "SELECT COALESCE(MAX(topic_seq),0)+1 AS seq FROM topic WHERE topic_pid=?";
     $c = $db->prepare($sql);
-    $c->execute(array($to, $id));
+    $c->execute(array($to));
+    $rows = $c->fetchAll(PDO::FETCH_ASSOC);
+    $newseq = $rows[0]['seq'];
+    
+    $sql = "SELECT * FROM topic WHERE topic_id=?";
+    $c = $db->prepare($sql);
+    $c->execute(array($id));
+    $rows = $c->fetchAll(PDO::FETCH_ASSOC);
+    $oldseq = $rows[0]['topic_seq'];
+    $oldpid = $rows[0]['topic_pid'];
+    
+    $sql = "UPDATE topic SET topic_pid=?,topic_seq=? WHERE topic_id=?";
+    $c = $db->prepare($sql);
+    $c->execute(array($to, $newseq, $id));
+    
+    $sql = "UPDATE topic SET topic_seq=topic_seq-1 WHERE topic_pid=? AND topic_seq>?";
+    $c = $db->prepare($sql);
+    $c->execute(array($oldpid, $oldseq));
+    
+    $db->exec('COMMIT TRANSACTION');
 }
 
-function tree_del($id) {
+function tree_del($id,$lev=0) {
     $db = db_connect();
+    if ($lev==0) $db->exec('BEGIN TRANSACTION');
     $sql = "SELECT * FROM topic WHERE topic_pid=?";
     $sth = $db->prepare($sql); $sth->execute(array($id));
     while( $row = $sth->fetch(PDO::FETCH_ASSOC) ) {
-        treedel($row['topic_id']);
+        tree_del($row['topic_id'],$lev+1);
     }
     $sql = "DELETE FROM content WHERE content_topic_id=?";
     $sth = $db->prepare($sql);
     $sth->execute(array($id));
+	if ($lev==0) {
+		$sql = "SELECT * FROM topic WHERE topic_id=?";
+		$sth = $db->prepare($sql);
+		$sth->execute(array($id));
+		$rows = $sth->fetchAll(PDO::FETCH_ASSOC);
+		$pid = $rows[0]['topic_pid'];
+		$seq = $rows[0]['topic_seq'];
+		$sql = "UPDATE topic SET topic_seq=topic_seq-1 WHERE topic_pid=? AND topic_seq>?";
+		$sth = $db->prepare($sql);
+		$sth->execute(array($pid,$seq));
+	}
     $sql = "DELETE FROM topic WHERE topic_id=?";
     $sth = $db->prepare($sql);
     $sth->execute(array($id));
+    if ($lev==0) $db->exec('COMMIT TRANSACTION');
 }
 
 function tree_edit($id, $data) {
     extract($data);
-    $sql = "UPDATE topic SET topic_name=? WHERE topic_id=?";
     $db = db_connect();
+    $db->exec('BEGIN TRANSACTION');
+    $sql = "SELECT * FROM topic WHERE topic_id=?";
     $c = $db->prepare($sql);
-    $c->execute(array($topic, $id));
+    $c->execute(array($id));
+    $rows = $c->fetchAll(PDO::FETCH_ASSOC);
+    $pid = $rows[0]['topic_pid'];
+    $oldseq = $rows[0]['topic_seq'];
+    $sql = "SELECT COALESCE(MIN(topic_seq),0) as min, COALESCE(MAX(topic_seq),0) as max".
+		   " FROM topic WHERE topic_pid=?";
+	$c = $db->prepare($sql);
+	$c->execute(array($pid));
+	$rows = $c->fetchAll(PDO::FETCH_ASSOC);
+	$min = $rows[0]['min'];
+	$max = $rows[0]['max'];
+	if ($min==0) $seq = 1; else {
+		if ($seq<$min) $seq = 1;
+		else if ($seq>$max) $seq=$max;
+	}
+	$sql = "UPDATE topic SET topic_seq=topic_seq-1 WHERE topic_pid=? AND topic_seq>=?";
+	$c = $db->prepare($sql);
+	$c->execute(array($pid, $oldseq));
+	$sql = "UPDATE topic SET topic_seq=topic_seq+1 WHERE topic_pid=? AND topic_seq>=?";
+	$c = $db->prepare($sql);
+	$c->execute(array($pid, $seq));
+    $sql = "UPDATE topic SET topic_name=?,topic_seq=? WHERE topic_id=?";
+    $c = $db->prepare($sql);
+    $c->execute(array($topic, $seq, $id));
+    $db->exec('COMMIT TRANSACTION');
 }
 
 function tree_add($data) {
     extract($data);
-    $sql = "INSERT INTO topic (topic_pid, topic_name) VALUES (?,?)";
     $db = db_connect();
+    $db->exec('BEGIN TRANSACTION');
+    $sql = "SELECT COALESCE(MAX(topic_seq),0)+1 AS seq FROM topic WHERE topic_pid=?";
     $c = $db->prepare($sql);
-    $c->execute(array($pid, $topic));
-    return $db->lastInsertId();
+    $c->execute(array($pid));
+    $row = $c->fetchAll(PDO::FETCH_ASSOC);
+    $seq = $row[0]['seq'];
+    $sql = "INSERT INTO topic (topic_pid, topic_seq, topic_name) VALUES (?,?,?)";
+    $c = $db->prepare($sql);
+    $c->execute(array($pid, $seq, $topic));
+    $last_id = $db->lastInsertId();
+    $db->exec('COMMIT TRANSACTION');
+    return $last_id;
 }
 
 function _t($s) {

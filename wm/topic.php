@@ -30,20 +30,24 @@ $(document).ready(function(){
 
 function nodeview($pid=0) {
     $db = db_connect();
-    $sql = "SELECT content_id, content_title FROM content WHERE content_topic_id=%d ORDER BY content_title";
+    $sql = "SELECT content_id, content_seq, content_title ".
+           "FROM content WHERE content_topic_id=%d ORDER BY content_seq";
     $sql = sprintf($sql, $pid);
     $s = '';   
     foreach($db->query($sql) as $row) {
         $t = '<div class="subject"><div><a class="link" href="%s" target="right">%s</a></div></div>'."\n";
         $u = 'index.php?cmd=text&id='.$row['content_id'];
-        $s .= sprintf($t,$u,htmlspecialchars($row['content_title']));
+        $content_title = $row['content_title'];
+        if (isset($_SESSION['login']) && $_SESSION['login']==ROOT_LOGIN)
+			$content_title = $row['content_seq'].'. '.$content_title;
+        $s .= sprintf($t,$u,htmlspecialchars($content_title));
     }
     return $s;
 }
 
 function treeview($pid=0) {
     $db = db_connect();
-    $sql = "SELECT * FROM topic WHERE topic_pid=%d ORDER BY topic_name";
+    $sql = "SELECT * FROM topic WHERE topic_pid=%d ORDER BY topic_seq";
     $sql = sprintf($sql, $pid);
     $r = '';
     foreach($db->query($sql) as $row) {
@@ -52,9 +56,12 @@ function treeview($pid=0) {
         $text = $topic.$node;
         $t = '<div><a class="link" href="%s" target="right">%s</a></div>'."\n";
         $usw = 'index.php?cmd=switch&id='.$row['topic_id']; $u='';
-        if (isset($_SESSION['login']) && $_SESSION['login']==ROOT_LOGIN) 
+        $topic_name = $row['topic_name'];
+        if (isset($_SESSION['login']) && $_SESSION['login']==ROOT_LOGIN) {
             $u = 'index.php?cmd=node&id='.$row['topic_id'];
-        $s = sprintf($t, $u, htmlspecialchars($row['topic_name']));
+            $topic_name = $row['topic_seq'].'. '.$topic_name;
+        }
+        $s = sprintf($t, $u, htmlspecialchars($topic_name));
         $t = '<div class="submenu" style="%s">%s</div>'."\n";
         $display='display:none;';
         $test = isset($_SESSION['opened']) && is_array($_SESSION['opened']) &&

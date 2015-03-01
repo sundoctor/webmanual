@@ -16,6 +16,10 @@ $(document).ready(function(){
             <td><input type="text" id="title" name="title" value="<?php echo isset($title)?htmlspecialchars($title):''; ?>" size="70" maxlength="100" /></td>
         </tr>
         <tr>
+            <td>Position:</td>
+            <td><input type="text" name="seq" value="<?php echo isset($seq)?htmlspecialchars($seq):''; ?>" size="70" maxlength="20" /></td>
+        </tr>
+        <tr>
             <td>Text:</td>
             <td><textarea name="text" cols="70" rows="15"><?php echo isset($text)?htmlspecialchars($text):''; ?></textarea></td>
         </tr>

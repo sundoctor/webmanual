@@ -16,14 +16,15 @@ if ($test) {
     $text = substr($_POST['text'],0,65000);
     $format = substr($_POST['format'],0,10);
     if ($title!='') {
-        $id = text_add(array('title'=>$title,'text'=>$text,'format'=>$format));
+        $id = text_add(array('title'=>$title,'text'=>$text,'format'=>$format,'pid'=>$pid));
         header('Location: index.php?cmd=text&id='.$id.'&r=1');
         exit;
     }
     echo view('text-add.php', array('pid'=>$pid, 'title'=>$title, 'text'=>$text, 'format'=>$format));
 }
 else {
-    echo view('text-add.php', array('pid'=>$pid));
+	$format = 'plain';
+    echo view('text-add.php', array('pid'=>$pid, 'format'=>$format));
 }
 
 ?>
