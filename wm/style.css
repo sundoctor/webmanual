@@ -25,7 +25,7 @@ pre {
 
 div.vblock {
     border: 1px solid #fff;
-    height: 100%;
+    min-height: 100%;
 }
 
 ul.mline {
@@ -145,4 +145,10 @@ div.files td.col1 {
     color: green;
     font-family: Monospace, "Courier New";
     font-size: 11px;
+}
+
+table.list tr td {
+	border-left: 1px dashed #ccc;
+	padding: 15px;
+    vertical-align: top;
 }

@@ -90,16 +90,26 @@ function format_content($row) {
                 $row['content'] = str_replace("\n","<br/>\n",$row['content']);
         break;
     }
-    $row['content'] = preg_replace_callback('/{img#(\d+)}/', function ($m) {
+    $row['content'] = preg_replace_callback('@{cols#(\d+)}(.+){/cols}@s', function ($m) {
+        $n = $m[1]; $r = trim($m[2]); $a = explode("\n",$r); $s = ceil(count($a)/$n);
+        $t='<table class="list"><tr>';
+        for($i=0;$i<count($a);$i+=$s) {
+			$t.='<td>'.implode("\n",array_slice($a,$i,$s)).'</td>';
+		}
+		$t.='</tr></table>';
+		return $t;
+    }, $row['content']);
+
+    $row['content'] = preg_replace_callback('@{img#(\d+)}@', function ($m) {
         $r = file_row($m[1]); if ($r===null) return '';
         return sprintf('<img src="%s" class="file"/>', FILE_URLPREFIX.$r['file_path']);
     }, $row['content']);
-    $row['content'] = preg_replace_callback('/{file#(\d+)}/', function ($m) {
+    $row['content'] = preg_replace_callback('@{file#(\d+)}@', function ($m) {
         $r = file_row($m[1]); if ($r===null) return '';
         $n = FILE_URLPREFIX.$r['file_path'];
         return sprintf('<a href="%s" class="file">%s</a>', $n, $r['file_path']);
     }, $row['content']);
-    $row['content'] = preg_replace_callback('/{link#(.+)}/', function ($m) {
+    $row['content'] = preg_replace_callback('@{link#(.+)}@', function ($m) {
         if (stripos($m[1],'http')===0)
             return sprintf('<a href="%s" class="file" target="_blank">%s</a>', $m[1], $m[1]);
         return sprintf('<a href="%s" class="file">%s</a>', $m[1], $m[1]);
