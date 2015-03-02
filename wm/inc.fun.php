@@ -78,12 +78,12 @@ function check_upload($filename) {
     return in_array($ext, $arr) && (strpos($filename,'.')!==false);
 }
 
-function color($m,$c) {
-	return '<span style="color:'.$c.';">'.$m.'</span>';
+function color($t,$c,$prefix='',$postfix='') {
+	return $prefix.'<span style="color:'.$c.';">'.$t.'</span>'.$postfix;
 }
 
-function bold($m) {
-	return '<b>'.$m.'</b>';
+function bold($t,$prefix='',$postfix='') {
+	return $prefix.'<b>'.$t.'</b>'.$postfix;
 }
 
 function format_content($row) {
@@ -117,17 +117,17 @@ function format_content($row) {
 			continue;
 		} else {
 			$count = 0;
-			$t[$k] = preg_replace($re, $su, rtrim($t[$k]), -1, $count);
+			$t[$k] = stripslashes(preg_replace($re, $su, rtrim($t[$k]), -1, $count));
 		}
 	}
 	$row['content']=implode("\n",$t);
 	
-    $row['content'] = preg_replace_callback('@{block#(#[0-9a-fA-F]+)}(.+){/block#}@s', function ($m) {
+    $row['content'] = preg_replace_callback('@{block#(#[0-9a-fA-F]+)}(.+?){/block#}@s', function ($m) {
         $c = $m[1]; $t = trim($m[2]);
         return '<span class="block" style="background-color:'.$c.';">'.$t.'</span>';
     }, $row['content']);
     
-    $row['content'] = preg_replace_callback('@{cols#(\d+)}(.+){/cols#}@s', function ($m) {
+    $row['content'] = preg_replace_callback('@{cols#(\d+)}(.+?){/cols#}@s', function ($m) {
         $n = $m[1]; $r = trim($m[2]); $a = explode("\n",$r); $s = ceil(count($a)/$n);
         $t='<table class="list"><tr>';
         for($i=0;$i<count($a);$i+=$s) {
