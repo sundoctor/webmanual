@@ -17,11 +17,11 @@ if (!defined('WEBAPP')) die;
 
     define('DATABASE_FILE', dirname(__FILE__).'/content.db');
 
-    define('PROJECT_TITLE', 'WebManual v0.02');
+    define('PROJECT_TITLE', 'WebManual v0.03');
     
     define('APPLICATION', 'WebManual');
     
-    define('VERSION', '0.02');
+    define('VERSION', '0.03');
 
     define('FAST_SQLITE', true);
 

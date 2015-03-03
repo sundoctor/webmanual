@@ -7,38 +7,35 @@
     </ul>
     <hr />
     <div class="vblock">
-        <p>Hello world!</p>
+        <p><b>Hello world!</b></p>
         <p>You can change this starting text in file <i><?php echo __FILE__; ?></i></p>
 		<br/>
+        <div style="border:1px dashed #bbeebb; padding: 20px;">
         <p>Supported constructions in plain tags:</p>
         <ul>
-        <li><b>{img#[number]}</b> - image to show</li>
-        <li>Sample: {img#1}</li>
+        <li><b>{-IMG:[number]-}</b> - image to show</li>
+        <li>Sample: {-IMG:1-}</li>
         <br/>
-        <li><b>{file#[number]}</b> - file to download, e.g. {file#2}</li>
-        <li>Sample: {file#2}</li>
+        <li><b>{-FILE:[number]-}</b> - file to download</li>
+        <li>Sample: {-FILE:2-}</li>
         <br/>
-        <li><b>{link#[url]}</b> - link to jump, e.g. {link@http://user.su}</li>
-        <li>Sample: {link#http://user.su}</li>
+        <li><b>{-LINK:[url]-}</b> - link to jump</li>
+        <li>Sample: {-LINK:http://user.su-}</li>
         <br/>
-        <li><b>{block#[#color]}...{/block#}</b> - colored block, e.g. {block##ffeedd}text{/block#}</li>
-        <li>Sample: {block##ffeedd}text text text{/block#}</li>
+        <li><b>{-LINK:[url|description]-}</b> - link to jump</li>
+        <li>Sample: {-LINK:http://user.su|Some site-}</li>
         <br/>
-        <li><b>{cols#[number]}...{/cols#}</b> - view content in columns, e.g. {cols#2}text text text{/cols#}</li>
-        <li>Sample: {cols#2}text text text{/cols#}</li>
+        <li><b>{-BLOCK:[#color]-}...{-block-}</b> - colored block</li>
+        <li>Sample: {-BLOCK:#eeffcc-}text text text{-block-}</li>
         <br/>
-        <li><b>{regexp#[template]#[color('$2','#color',[prefix],[postfix])]}</b> - syntax highlight</li>
-        <li>Sample: {regexp#^(\s*)(//.+)#color('$2','#00AA00','$1')}</li>
+        <li><b>{-COLS:[number]-}...{-cols-}</b> - view content in columns</li>
+        <li>Sample: {-COLS:2-}text text text{-cols-}</li>
+        <br/>
+        <li><b>{-REGEXP:/[template]/:[color('$2','#color',[prefix],[postfix])]-}</b> - syntax highlight</li>
+        <li>Sample: {-REGEXP:#(\s*)(//.+)#:color('$2','#00AA00','$1')-}</li>
         </ul>
+        </div>
         <br/><br/><br/>
-        <p>Unworking variants for future:</p>
-        <pre>
-        {-BLOCK:#ffffff-}text text text{-block-}
-        {-COLS:2-}text text text{-cols-}
-        {-LINK:http://user.su-}
-        {-REGEXP:^(\s*)(//.+):color('$2','#00AA00','$1')-}
-        </pre>
-
     </div>
     <hr />
     <p class="copyright">This page is created with WebManual</p>

@@ -89,45 +89,34 @@ function bold($t,$prefix='',$postfix='') {
 function format_content($row) {
     $row['content'] = $row['content_text'];
 
-    switch ($row['content_format']) {
-    case 'plain':
+    if ($row['content_format']=='plain') {
         $row['content'] = htmlspecialchars($row['content']);
         $row['content'] = str_replace('&quot;','"',$row['content']);
-        break;
-    case 'html':
-        if (stripos($row['content'],'<br>')==false &&
-            stripos($row['content'],'<br/>')==false)
-                $row['content'] = str_replace("\n","<br/>\n",$row['content']);
-        break;
     }
     
     $re=array(); $su=array(); $t=explode("\n",$row['content']);
     foreach($t as $k=>$s) {
-		if (preg_match('/{regexp#[^}]+}/',$s)) {
-			$rx=trim($s); unset($t[$k]);
-			$rs = substr($rx,8,-1);
-			$c='#';
-			if ($rs{0}=='@' || $rs{0}=='/') $c=$rs{0};
-			$rk=$c.substr($rs,0,strpos($rs,$c)).$c.'e';
-			$sk=substr($rs,strpos($rs,$c)+1);
-			$re[]=$rk; $su[]=$sk;
-
+		if (preg_match('/{-REGEXP:([^}]+)-}/',$s,$m)) {
+			$rx=$m[1]; unset($t[$k]);
+            if (preg_match('/^(.)(.*)(.):(.*)$/',$rx,$m)) {
+                $re[]=$m[1].$m[2].$m[3].'e'; $su[]=$m[4];
+            }
 		}
-		else if (preg_match('@{/?[a-z]+#[^}]*}@',$s)) {
+		else if (preg_match('/{-?[a-zA-Z]+-}/',$s)) {
 			continue;
 		} else {
 			$count = 0;
-			$t[$k] = stripslashes(preg_replace($re, $su, rtrim($t[$k]), -1, $count));
+			$t[$k] = stripslashes(@preg_replace($re, $su, rtrim($t[$k]), -1, $count));
 		}
 	}
 	$row['content']=implode("\n",$t);
 	
-    $row['content'] = preg_replace_callback('@{block#(#[0-9a-fA-F]+)}(.+?){/block#}@s', function ($m) {
+    $row['content'] = preg_replace_callback('@{-BLOCK:(#[0-9a-fA-F]+)-}(.+?){-block-}@s', function ($m) {
         $c = $m[1]; $t = trim($m[2]);
         return '<span class="block" style="background-color:'.$c.';">'.$t.'</span>';
     }, $row['content']);
     
-    $row['content'] = preg_replace_callback('@{cols#(\d+)}(.+?){/cols#}@s', function ($m) {
+    $row['content'] = preg_replace_callback('@{-COLS:(\d+)-}(.+?){-cols-}@s', function ($m) {
         $n = $m[1]; $r = trim($m[2]); $a = explode("\n",$r); $s = ceil(count($a)/$n);
         $t='<table class="list"><tr>';
         for($i=0;$i<count($a);$i+=$s) {
@@ -137,25 +126,32 @@ function format_content($row) {
 		return $t;
     }, $row['content']);
 
-    $row['content'] = preg_replace_callback('@{img#(\d+)}@', function ($m) {
+    $row['content'] = preg_replace_callback('@{-IMG:(\d+)-}@', function ($m) {
         $r = file_row($m[1]); if ($r===null) return '';
         return sprintf('<img src="%s" class="file"/>', FILE_URLPREFIX.$r['file_path']);
     }, $row['content']);
     
-    $row['content'] = preg_replace_callback('@{file#(\d+)}@', function ($m) {
+    $row['content'] = preg_replace_callback('@{-FILE:(\d+)-}@', function ($m) {
         $r = file_row($m[1]); if ($r===null) return '';
         $n = FILE_URLPREFIX.$r['file_path'];
         return sprintf('<a href="%s" class="file">%s</a>', $n, $r['file_path']);
     }, $row['content']);
     
-    $row['content'] = preg_replace_callback('@{link#(.+)}@', function ($m) {
-        if (stripos($m[1],'http')===0)
-            return sprintf('<a href="%s" class="file" target="_blank">%s</a>', $m[1], $m[1]);
-        return sprintf('<a href="%s" class="file">%s</a>', $m[1], $m[1]);
+    $row['content'] = preg_replace_callback('@{-LINK:(.+)-}@', function ($m) {
+        $u=$m[1]; $p=$u;
+        if (preg_match('/^(.+)\|(.+)$/',$u,$m)) list($u,$p)=array($m[1],$m[2]);
+        if (stripos($u,'http')===0)
+            return sprintf('<a href="%s" class="file" target="_blank">%s</a>', $u, $p);
+        return sprintf('<a href="%s" class="file">%s</a>', $u, $p);
     }, $row['content']);
     
     if ($row['content_format']=='plain')
 		$row['content']='<pre>'.$row['content'].'</pre>';
+
+    if ($row['content_format']=='html')
+        if (stripos($row['content'],'<br>')==false &&
+            stripos($row['content'],'<br/>')==false)
+                $row['content'] = str_replace("\n","<br/>\n",$row['content']);
     return $row;
 }
 
