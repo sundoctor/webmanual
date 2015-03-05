@@ -38,7 +38,7 @@ function nodeview($pid=0) {
         $t = '<div class="subject"><div><a class="link" href="%s" target="right">%s</a></div></div>'."\n";
         $u = 'index.php?cmd=text&id='.$row['content_id'];
         $content_title = $row['content_title'];
-        if (isset($_SESSION['login']) && $_SESSION['login']==ROOT_LOGIN)
+        if (App::mod()->registered())
 			$content_title = $row['content_seq'].'. '.$content_title;
         $s .= sprintf($t,$u,htmlspecialchars($content_title));
     }
@@ -57,15 +57,15 @@ function treeview($pid=0) {
         $t = '<div><a class="link" href="%s" target="right">%s</a></div>'."\n";
         $usw = 'index.php?cmd=switch&id='.$row['topic_id']; $u='';
         $topic_name = $row['topic_name'];
-        if (isset($_SESSION['login']) && $_SESSION['login']==ROOT_LOGIN) {
+        if (App::mod()->registered()) {
             $u = 'index.php?cmd=node&id='.$row['topic_id'];
             $topic_name = $row['topic_seq'].'. '.$topic_name;
         }
         $s = sprintf($t, $u, htmlspecialchars($topic_name));
         $t = '<div class="submenu" style="%s">%s</div>'."\n";
         $display='display:none;';
-        $test = isset($_SESSION['opened']) && is_array($_SESSION['opened']) &&
-            isset($_SESSION['opened'][$row['topic_id']]);
+        $test = isset($_SESSION[SECRET_KEY.'opened']) && is_array($_SESSION[SECRET_KEY.'opened']) &&
+            isset($_SESSION[SECRET_KEY.'opened'][$row['topic_id']]);
         if ($test) $display='';
         $state=($display==''?'opened':'closed');
         if ($text!='') $s.=sprintf($t,$display,$text);

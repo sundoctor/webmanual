@@ -1,6 +1,6 @@
 <?php if (!defined('WEBAPP')) die; ?>
 <?php
-if (!(isset($_SESSION['login']) && $_SESSION['login']==ROOT_LOGIN)) die;
+if (!App::mod()->registered()) die;
 
 function listfiles() {
     $db = db_connect();

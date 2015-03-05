@@ -440,6 +440,10 @@ class App {
     public function set($n,$v) {
         self::$reg[$n]=$v;
     }
+    public function registered() {
+        return (isset($_SESSION[SECRET_KEY.'login']) &&
+        ($_SESSION[SECRET_KEY.'login']==ROOT_LOGIN));
+    }
 }
 
 ?>

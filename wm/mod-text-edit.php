@@ -1,7 +1,7 @@
 <?php if (!defined('WEBAPP')) die; ?>
 <?php
 
-if (!(isset($_SESSION['login']) && $_SESSION['login']==ROOT_LOGIN)) die;
+if (!App::mod()->registered()) die;
 
 $test = isset($_POST['id']) && isset($_POST['title']) && 
         isset($_POST['text']) && isset($_POST['format']) && 

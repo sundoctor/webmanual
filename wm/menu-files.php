@@ -8,7 +8,7 @@ $(document).ready(function(){
 </script>
     <ul class="mline">
         <li><a href="index.php?cmd=welcome">Home</a></li>
-<?php if (isset($_SESSION['login']) && $_SESSION['login']==ROOT_LOGIN): ?>
+<?php if (App::mod()->registered()): ?>
         <li>| <a href="index.php?cmd=file-add">Add file</a></li>
 <?php endif; ?>
     </ul>

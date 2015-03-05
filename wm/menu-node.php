@@ -8,7 +8,7 @@ $(document).ready(function(){
 </script>
     <ul class="mline">
         <li><a href="index.php?cmd=welcome">Home</a></li>
-<?php if (isset($_SESSION['login']) && $_SESSION['login']==ROOT_LOGIN): ?>
+<?php if (App::mod()->registered()): ?>
         <li>| <a href="index.php?cmd=tree-add&pid=<?php echo App::mod()->get('topic_id'); ?>">Add</a></li>
     <?php if (App::mod()->get('topic_id')>0): ?>
         <li>| <a href="index.php?cmd=tree-edit&id=<?php echo App::mod()->get('topic_id'); ?>">Edit</a></li>

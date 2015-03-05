@@ -5,8 +5,7 @@
     <title><?php echo PROJECT_TITLE; ?></title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
 </head>
-<?php $start = (isset($_SESSION['login']) && $_SESSION['login']==ROOT_LOGIN)?
-    "index.php?cmd=node&id=0" : "index.php?cmd=welcome"; ?>
+<?php $start = (App::mod()->registered()? "index.php?cmd=node&id=0" : "index.php?cmd=welcome"); ?>
 <frameset cols="35%,*" frameborder="1" framespacing="1">
     <frame id="left" name="left" src="index.php?cmd=topic">
     <frame id="right" name="right" src="<?php echo $start; ?>">

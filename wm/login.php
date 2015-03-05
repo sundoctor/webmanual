@@ -1,6 +1,6 @@
 <?php if (!defined('WEBAPP')) die; ?>
 <?php ob_start(); ?>
-
+<!-- <?php echo getenv('REMOTE_ADDR'); ?> -->
 <script type="text/javascript">
 $(document).ready(function(){
     $('#login').focus();

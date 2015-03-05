@@ -1,7 +1,7 @@
 <?php if (!defined('WEBAPP')) die; ?>
 <?php
 
-if (!(isset($_SESSION['login']) && $_SESSION['login']==ROOT_LOGIN)) die;
+if (!App::mod()->registered()) die;
 
 
 $test = isset($_FILES['file']) && isset($_FILES['file']['tmp_name']) &&

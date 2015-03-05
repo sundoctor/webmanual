@@ -8,7 +8,7 @@ $(document).ready(function(){
 </script>
     <ul class="mline">
         <li><a href="index.php?cmd=welcome">Home</a></li>
-<?php if (isset($_SESSION['login']) && $_SESSION['login']==ROOT_LOGIN): ?>
+<?php if (App::mod()->registered()): ?>
 <?php if (App::mod()->get('text_id')!=''): ?>
         <li>| <a href="index.php?cmd=text-edit&id=<?php echo App::mod()->get('text_id'); ?>">Edit</a></li>
         <li>| <a href="index.php?cmd=text-move&id=<?php echo App::mod()->get('text_id'); ?>">Move</a></li>

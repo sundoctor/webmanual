@@ -1,7 +1,7 @@
 <?php if (!defined('WEBAPP')) die; ?>
 <?php
 
-if (!(isset($_SESSION['login']) && $_SESSION['login']==ROOT_LOGIN)) die;
+if (!App::mod()->registered()) die;
 
 $test_post = isset($_POST['id']) && isset($_POST['topic']) && isset($_POST['seq']) && 
         is_numeric($_POST['id']) && is_string($_POST['topic']) && is_numeric($_POST['seq']);
