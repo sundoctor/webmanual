@@ -32,12 +32,15 @@ function db_connect() {
 }
 
 function file_row($id) {
-    $db = db_connect();
-    $sql = "SELECT * FROM files WHERE file_id=? LIMIT 1";
-    $sth = $db->prepare($sql); $sth->execute(array($id));
-    while( $row = $sth->fetch(PDO::FETCH_ASSOC))
-        return $row;
-    return null;
+    return App::mod()->cacheGet('file-'.$id, function () use ($id) {
+            $db = db_connect();
+            $sql = "SELECT * FROM files WHERE file_id=? LIMIT 1";
+            $sth = $db->prepare($sql); $sth->execute(array($id));
+            while( $row = $sth->fetch(PDO::FETCH_ASSOC))
+                return $row;
+            return null;
+        }
+    );
 }
 
 function file_del($id) {
@@ -48,6 +51,7 @@ function file_del($id) {
     $db = db_connect();
     $c = $db->prepare($sql);
     $c->execute(array($id));
+    App::mod()->cacheSet('file-'.$id,FALSE);
 }
 
 function file_add($data) {
@@ -156,14 +160,17 @@ function format_content($row) {
 }
 
 function text_row($id) {
-    $db = db_connect();
-    $sql = "SELECT * FROM content WHERE content_id=? LIMIT 1";
-    $sth = $db->prepare($sql); $sth->execute(array($id));
-    while( $row = $sth->fetch(PDO::FETCH_ASSOC)) {
-        $row = format_content($row);
-        return $row;
-    }
-    return null;
+    return App::mod()->cacheGet('text-'.$id, function () use ($id) {
+            $db = db_connect();
+            $sql = "SELECT * FROM content WHERE content_id=? LIMIT 1";
+            $sth = $db->prepare($sql); $sth->execute(array($id));
+            while( $row = $sth->fetch(PDO::FETCH_ASSOC)) {
+                $row = format_content($row);
+                return $row;
+            }
+            return null;
+        }
+    );
 }
 
 function text_move($id, $to) {
@@ -192,6 +199,8 @@ function text_move($id, $to) {
     $c->execute(array($oldpid, $oldseq));
     
     $db->exec('COMMIT TRANSACTION');
+    App::mod()->cacheSet('text-'.$id,FALSE);
+    App::mod()->cacheSet('topic-'.$to,FALSE);
 }
 
 function text_del($id) {
@@ -213,6 +222,7 @@ function text_del($id) {
 	$sth = $db->prepare($sql);
 	$sth->execute(array($pid,$seq));
 	$db->exec('COMMIT TRANSACTION');
+    App::mod()->cacheSet('text-'.$id,FALSE);
 }
 
 function text_edit($id, $data) {
@@ -248,7 +258,7 @@ function text_edit($id, $data) {
     $c = $db->prepare($sql);
     $c->execute(array($title, $text, $format, $seq, $id));
     $db->exec('COMMIT TRANSACTION');
-    
+    App::mod()->cacheSet('text-'.$id,FALSE);
 }
 
 function text_add($data) {
@@ -269,18 +279,21 @@ function text_add($data) {
 }
 
 function tree_row($id) {
-    if ($id==0) {
-        return array(
-            'topic_name' => 'Root Topic'
-        );
-    }
-    $db = db_connect();
-    $sql = "SELECT * FROM topic WHERE topic_id=? LIMIT 1";
-    $sth = $db->prepare($sql); $sth->execute(array($id));
-    while( $row = $sth->fetch(PDO::FETCH_ASSOC)) {
-        return $row;
-    }
-    return null;
+    return App::mod()->cacheGet('topic-'.$id, function () use ($id) {
+            if ($id==0) {
+                return array(
+                    'topic_name' => 'Root Topic'
+                );
+            }
+            $db = db_connect();
+            $sql = "SELECT * FROM topic WHERE topic_id=? LIMIT 1";
+            $sth = $db->prepare($sql); $sth->execute(array($id));
+            while( $row = $sth->fetch(PDO::FETCH_ASSOC)) {
+                return $row;
+            }
+            return null;
+        }
+    );
 }
 
 function tree_list($pid=0, $sel=0, $cur=0, $showroot=true) {
@@ -342,6 +355,8 @@ function tree_move($id, $to) {
     $c->execute(array($oldpid, $oldseq));
     
     $db->exec('COMMIT TRANSACTION');
+    App::mod()->cacheSet('topic-'.$id,FALSE);
+    App::mod()->cacheSet('topic-'.$to,FALSE);
 }
 
 function tree_del($id,$lev=0) {
@@ -369,7 +384,9 @@ function tree_del($id,$lev=0) {
     $sql = "DELETE FROM topic WHERE topic_id=?";
     $sth = $db->prepare($sql);
     $sth->execute(array($id));
+    App::mod()->cacheSet('topic-'.$id,FALSE);
     if ($lev==0) $db->exec('COMMIT TRANSACTION');
+    
 }
 
 function tree_edit($id, $data) {
@@ -403,6 +420,7 @@ function tree_edit($id, $data) {
     $c = $db->prepare($sql);
     $c->execute(array($topic, $seq, $id));
     $db->exec('COMMIT TRANSACTION');
+    App::mod()->cacheSet('topic-'.$id,FALSE);
 }
 
 function tree_add($data) {
@@ -422,12 +440,33 @@ function tree_add($data) {
     return $last_id;
 }
 
+function auto_open($id) {
+    $db = db_connect();
+    $sql = "SELECT content_topic_id FROM content WHERE content_id=?";
+    $sth = $db->prepare($sql); $sth->execute(array($id));
+    while( $row = $sth->fetch(PDO::FETCH_ASSOC) ) {
+        $tid = $row['content_topic_id'];
+        for(;;) {
+            if (!isset($_SESSION[SECRET_KEY.'opened']))
+                $_SESSION[SECRET_KEY.'opened'] = array();
+            $_SESSION[SECRET_KEY.'opened'][$tid] = true;
+            $sql = 'SELECT topic_pid FROM topic WHERE topic_id=?';
+            $sth = $db->prepare($sql); $sth->execute(array($tid));
+            $row = $sth->fetch(PDO::FETCH_ASSOC);
+            if ($row===FALSE || $row['topic_pid']==0) break;
+            $tid = $row['topic_pid'];
+        } 
+        break;
+    }
+}
+
 function _t($s) {
     return $s;
 }
 
 class App {
     private static $i;
+    private static $cache;
     public static $reg = array();
     public static function mod() {
         if ( empty(self::$i) )
@@ -443,6 +482,34 @@ class App {
     public function registered() {
         return (isset($_SESSION[SECRET_KEY.'login']) &&
         ($_SESSION[SECRET_KEY.'login']==ROOT_LOGIN));
+    }
+    private function cache() {
+        if (empty(self::$cache))
+            if (CACHE!='') {
+                list($cls,$p) = explode(':',CACHE);
+                list($srv,$port) = explode(',',$p);
+                self::$cache = new Memcached();
+                self::$cache->addServer($srv, $port);
+            }
+        return self::$cache;
+    }
+    public function cacheGet($k,$def=null) {
+        $val = null;
+        if (self::cache()) {
+            $val=self::$cache->get($k);
+            if ($val===FALSE && $def!==null) {
+               if (is_callable($def)) $val=$def(); else $val=$def;
+               self::cacheSet($k,$val);
+            }
+        } else {
+            if (is_callable($def)) $val=$def(); else $val=$def;
+        }
+        return $val;
+    }
+    public function cacheSet($k,$v) {
+        if (self::cache()) {
+            self::$cache->set($k,$v,time()+CACHE_TIME);
+        }
     }
 }
 

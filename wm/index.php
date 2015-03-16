@@ -9,8 +9,16 @@ require_once('inc.fun.php');
 $cmd = isset($_REQUEST['cmd']) && is_string($_REQUEST['cmd'])?
    substr($_REQUEST['cmd'],0,10) : 'frame';
 
+$start = "index.php?cmd=welcome";
+if (App::mod()->registered())
+    $start = "index.php?cmd=node&id=0";
+else if (isset($_GET['id']) && is_numeric($_GET['id']) && !isset($_GET['cmd'])) {
+    auto_open($_GET['id']);
+    $start = "index.php?cmd=text&id=".$_GET['id'];
+}
+
 switch($cmd) {
-    case 'frame': echo view('frame.php'); break;
+    case 'frame': echo view('frame.php',array('start'=>$start)); break;
     case 'welcome': echo view('welcome.php'); break;
     case 'topic': echo view('topic.php'); break;
     case 'idxlist': echo view('idxlist.php'); break;

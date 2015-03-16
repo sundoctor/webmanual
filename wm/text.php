@@ -11,9 +11,11 @@ App::mod()->set('text_id',$id);
 
 $t = 'Text #'.$id;
 echo view('page.php', array(
+    'id' => $id,
     'menu' => view('menu-right.php'),
     'refresh' => $refresh,
-    'header' => htmlspecialchars($row['content_title']), 
+    'title' => htmlspecialchars($row['content_title']),
+    'header' => htmlspecialchars($row['content_title']),
     'content' => $row['content']
 ));
 

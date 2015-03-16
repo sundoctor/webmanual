@@ -2,9 +2,9 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <?php if (isset($title)): ?>
+<?php if (isset($title)): ?>
     <title><?php echo $title; ?></title>
-    <?php endif; ?>
+<?php endif; ?>
     <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
     <script type="text/javascript" src="jquery-1.11.1.min.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css" />
@@ -13,8 +13,15 @@
     
 <script type="text/javascript">
 $(document).ready(function(){
-    var b=<?php echo (isset($refresh) && $refresh==1?1:0); ?>;
-    if (b) parent.left.location.reload();
+    var id=<?php echo isset($id)?$id:0; ?>;
+    if (!parent.left && id) parent.location.href='index.php?id='+id;
+    var rs=<?php echo (isset($refresh) && $refresh==1?1:0); ?>;
+    if (rs && parent.left) parent.left.location.reload();
+    $('#cpy').click(function(){
+        window.clipboardData.setData("Text",location.href);
+        alert('This page URL now is in clipboard!');
+        return false;
+    });
 });
 </script>
 
