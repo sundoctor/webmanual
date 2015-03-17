@@ -496,7 +496,7 @@ class App {
     public function cacheGet($k,$def=null) {
         $val = null;
         if (self::cache()) {
-            $val=self::$cache->get($k);
+            $val=self::$cache->get(SECRET_KEY.$k);
             if ($val===FALSE && $def!==null) {
                if (is_callable($def)) $val=$def(); else $val=$def;
                self::cacheSet($k,$val);
@@ -508,7 +508,7 @@ class App {
     }
     public function cacheSet($k,$v) {
         if (self::cache()) {
-            self::$cache->set($k,$v,time()+CACHE_TIME);
+            self::$cache->set(SECRET_KEY.$k,$v,time()+CACHE_TIME);
         }
     }
 }
