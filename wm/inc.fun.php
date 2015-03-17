@@ -485,7 +485,7 @@ class App {
     }
     private function cache() {
         if (empty(self::$cache))
-            if (CACHE!='') {
+            if (CACHE!='' && !self::registered()) {
                 list($cls,$p) = explode(':',CACHE);
                 list($srv,$port) = explode(',',$p);
                 self::$cache = new Memcached();
