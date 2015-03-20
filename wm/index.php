@@ -6,6 +6,11 @@ session_start();
 require_once('inc.config.php');
 require_once('inc.fun.php');
 
+function error_handler($errno, $errstr, $errfile, $errline) {
+    throw new Exception($errstr);
+}
+set_error_handler('error_handler');
+
 $cmd = isset($_REQUEST['cmd']) && is_string($_REQUEST['cmd'])?
    substr($_REQUEST['cmd'],0,10) : 'frame';
 
@@ -41,5 +46,7 @@ switch($cmd) {
     case 'file-add': include('mod-file-add.php'); break;
     case 'file-get': include('file-get.php'); break;
 }
+
+restore_error_handler();
 
 ?>

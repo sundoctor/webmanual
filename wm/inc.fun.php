@@ -110,7 +110,10 @@ function format_content($row) {
 			continue;
 		} else {
 			$count = 0;
-			$t[$k] = stripslashes(@preg_replace($re, $su, rtrim($t[$k]), -1, $count));
+            try {
+            $t[$k] = stripslashes(@preg_replace($re, $su, rtrim($t[$k]), -1, $count));
+            } catch (Exception $e) {
+            }
 		}
 	}
 	$row['content']=implode("\n",$t);
