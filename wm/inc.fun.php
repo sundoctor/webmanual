@@ -90,6 +90,10 @@ function bold($t,$prefix='',$postfix='') {
 	return $prefix.'<b>'.$t.'</b>'.$postfix;
 }
 
+function callback($f) {
+    print_r($f);die;
+}
+
 function format_content($row) {
     $row['content'] = $row['content_text'];
 
@@ -103,7 +107,7 @@ function format_content($row) {
 		if (preg_match('/{-REGEXP:([^}]+)-}/',$s,$m)) {
 			$rx=$m[1]; unset($t[$k]);
             if (preg_match('/^(.)(.*)(.):(.*)$/',$rx,$m)) {
-                $re[]=$m[1].$m[2].$m[3].'e'; $su[]=$m[4];
+                $re[]=$m[1].$m[2].$m[3]; $su[]=$m[4];
             }
 		}
 		else if (preg_match('/{-?[a-zA-Z]+-}/',$s)) {
@@ -111,7 +115,16 @@ function format_content($row) {
 		} else {
 			$count = 0;
             try {
-            $t[$k] = stripslashes(@preg_replace($re, $su, rtrim($t[$k]), -1, $count));
+                foreach($re as $i=>$r) {
+                    $q=$su[$i];
+                    $t[$k] = stripslashes(preg_replace_callback($r,
+                      function ($m) use ($q) {
+                          $w = preg_replace('/\'\$(\d)\'/','$m[\1]',$q).';';
+                          $f = create_function('$m','return '.$w);
+                          return $f($m);
+                      }
+                    , rtrim($t[$k]), -1, $count));
+                }
             } catch (Exception $e) {
             }
 		}
