@@ -1,7 +1,7 @@
 <?php
 if (!defined('WEBAPP')) die;
 if (!defined('SQLITE_DEBUG'))
-	define('SQLITE_DEBUG',true);
+    define('SQLITE_DEBUG',true);
 
 function view() {
     $args = func_get_args();
@@ -27,7 +27,7 @@ function db_connect() {
            'PRAGMA case_sensitive_like = 0;';
     if (FAST_SQLITE) $db->exec($sql);
     if (SQLITE_DEBUG)
-		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     return $db;
 }
 
@@ -83,11 +83,11 @@ function check_upload($filename) {
 }
 
 function color($t,$c,$prefix='',$postfix='') {
-	return $prefix.'<span style="color:'.$c.';">'.$t.'</span>'.$postfix;
+    return $prefix.'<span style="color:'.$c.';">'.$t.'</span>'.$postfix;
 }
 
 function bold($t,$prefix='',$postfix='') {
-	return $prefix.'<b>'.$t.'</b>'.$postfix;
+    return $prefix.'<b>'.$t.'</b>'.$postfix;
 }
 
 function callback($f) {
@@ -104,20 +104,20 @@ function format_content($row) {
     
     $re=array(); $su=array(); $t=explode("\n",$row['content']);
     foreach($t as $k=>$s) {
-		if (preg_match('/{-REGEXP:([^}]+)-}/',$s,$m)) {
-			$rx=$m[1]; unset($t[$k]);
+        if (preg_match('/{-REGEXP:([^}]+)-}/',$s,$m)) {
+            $rx=$m[1]; unset($t[$k]);
             if (preg_match('/^(.)(.*)(.):(.*)$/',$rx,$m)) {
                 $re[]=$m[1].$m[2].$m[3]; $su[]=$m[4];
             }
-		}
-		else if (preg_match('/{-?[a-zA-Z]+-}/',$s)) {
-			continue;
-		} else {
-			$count = 0;
+        }
+        else if (preg_match('/{-?[a-zA-Z]+-}/',$s)) {
+            continue;
+        } else {
+            $count = 0;
             try {
                 foreach($re as $i=>$r) {
                     $q=$su[$i];
-                    $t[$k] = stripslashes(preg_replace_callback($r,
+                    $t[$k] = (preg_replace_callback($r,
                       function ($m) use ($q) {
                           $w = preg_replace('/\'\$(\d)\'/','$m[\1]',$q).';';
                           $f = create_function('$m','return '.$w);
@@ -127,10 +127,10 @@ function format_content($row) {
                 }
             } catch (Exception $e) {
             }
-		}
-	}
-	$row['content']=implode("\n",$t);
-	
+        }
+    }
+    $row['content']=implode("\n",$t);
+    
     $row['content'] = preg_replace_callback('@{-BLOCK:(#[0-9a-fA-F]+)-}(.+?){-block-}@s', function ($m) {
         $c = $m[1]; $t = trim($m[2]);
         return '<span class="block" style="background-color:'.$c.';">'.$t.'</span>';
@@ -140,10 +140,10 @@ function format_content($row) {
         $n = $m[1]; $r = trim($m[2]); $a = explode("\n",$r); $s = ceil(count($a)/$n);
         $t='<table class="list"><tr>';
         for($i=0;$i<count($a);$i+=$s) {
-			$t.='<td>'.implode("\n",array_slice($a,$i,$s)).'</td>';
-		}
-		$t.='</tr></table>';
-		return $t;
+            $t.='<td>'.implode("\n",array_slice($a,$i,$s)).'</td>';
+        }
+        $t.='</tr></table>';
+        return $t;
     }, $row['content']);
 
     $row['content'] = preg_replace_callback('@{-IMG:(\d+)-}@', function ($m) {
@@ -166,7 +166,7 @@ function format_content($row) {
     }, $row['content']);
     
     if ($row['content_format']=='plain')
-		$row['content']='<pre>'.$row['content'].'</pre>';
+        $row['content']='<pre>'.$row['content'].'</pre>';
 
     if ($row['content_format']=='html')
         if (stripos($row['content'],'<br>')==false &&
@@ -193,7 +193,7 @@ function text_move($id, $to) {
     $db = db_connect();
     $db->exec('BEGIN TRANSACTION');
 
-	$sql = "SELECT COALESCE(MAX(content_seq),0)+1 AS seq FROM content WHERE content_topic_id=?";
+    $sql = "SELECT COALESCE(MAX(content_seq),0)+1 AS seq FROM content WHERE content_topic_id=?";
     $c = $db->prepare($sql);
     $c->execute(array($to));
     $rows = $c->fetchAll(PDO::FETCH_ASSOC);
@@ -223,21 +223,21 @@ function text_del($id) {
     $db = db_connect();
     
     $db->exec('BEGIN TRANSACTION');
-	$sql = "SELECT content_topic_id, content_seq FROM content WHERE content_id=?";
-	$sth = $db->prepare($sql);
-	$sth->execute(array($id));
-	$rows = $sth->fetchAll(PDO::FETCH_ASSOC);
-	$pid = $rows[0]['content_topic_id'];
-	$seq = $rows[0]['content_seq'];
-	
+    $sql = "SELECT content_topic_id, content_seq FROM content WHERE content_id=?";
+    $sth = $db->prepare($sql);
+    $sth->execute(array($id));
+    $rows = $sth->fetchAll(PDO::FETCH_ASSOC);
+    $pid = $rows[0]['content_topic_id'];
+    $seq = $rows[0]['content_seq'];
+    
     $sql = "DELETE FROM content WHERE content_id=?";
     $c = $db->prepare($sql);
     $c->execute(array($id));
     
-	$sql = "UPDATE content SET content_seq=content_seq-1 WHERE content_topic_id=? AND content_seq>?";
-	$sth = $db->prepare($sql);
-	$sth->execute(array($pid,$seq));
-	$db->exec('COMMIT TRANSACTION');
+    $sql = "UPDATE content SET content_seq=content_seq-1 WHERE content_topic_id=? AND content_seq>?";
+    $sth = $db->prepare($sql);
+    $sth->execute(array($pid,$seq));
+    $db->exec('COMMIT TRANSACTION');
     App::mod()->cacheSet('text-'.$id,FALSE);
 }
 
@@ -253,22 +253,22 @@ function text_edit($id, $data) {
     $pid = $rows[0]['content_topic_id'];
     $oldseq = $rows[0]['content_seq'];
     $sql = "SELECT COALESCE(MIN(content_seq),0) as min, COALESCE(MAX(content_seq),0) as max".
-		   " FROM content WHERE content_topic_id=?";
-	$c = $db->prepare($sql);
-	$c->execute(array($pid));
-	$rows = $c->fetchAll(PDO::FETCH_ASSOC);
-	$min = $rows[0]['min'];
-	$max = $rows[0]['max'];
-	if ($min==0) $seq = 1; else {
-		if ($seq<$min) $seq = 1;
-		else if ($seq>$max) $seq=$max;
-	}
-	$sql = "UPDATE content SET content_seq=content_seq-1 WHERE content_topic_id=? AND content_seq>=?";
-	$c = $db->prepare($sql);
-	$c->execute(array($pid, $oldseq));
-	$sql = "UPDATE content SET content_seq=content_seq+1 WHERE content_topic_id=? AND content_seq>=?";
-	$c = $db->prepare($sql);
-	$c->execute(array($pid, $seq));
+           " FROM content WHERE content_topic_id=?";
+    $c = $db->prepare($sql);
+    $c->execute(array($pid));
+    $rows = $c->fetchAll(PDO::FETCH_ASSOC);
+    $min = $rows[0]['min'];
+    $max = $rows[0]['max'];
+    if ($min==0) $seq = 1; else {
+        if ($seq<$min) $seq = 1;
+        else if ($seq>$max) $seq=$max;
+    }
+    $sql = "UPDATE content SET content_seq=content_seq-1 WHERE content_topic_id=? AND content_seq>=?";
+    $c = $db->prepare($sql);
+    $c->execute(array($pid, $oldseq));
+    $sql = "UPDATE content SET content_seq=content_seq+1 WHERE content_topic_id=? AND content_seq>=?";
+    $c = $db->prepare($sql);
+    $c->execute(array($pid, $seq));
     $sql = "UPDATE content SET content_title=?, content_text=?, content_format=?, content_seq=? WHERE content_id=?";
     $db = db_connect();
     $c = $db->prepare($sql);
@@ -321,10 +321,10 @@ function tree_list($pid=0, $sel=0, $cur=0, $showroot=true) {
         $c++;
         if ($c==1) {
             if ($pid==0) {
-				if ($showroot)
-					$t = '<input type="radio" name="to" value="0"%s/> /root';
-				else
-					$t = '<input type="radio" name="to" value="0" disabled="yes"%s/> /root';
+                if ($showroot)
+                    $t = '<input type="radio" name="to" value="0"%s/> /root';
+                else
+                    $t = '<input type="radio" name="to" value="0" disabled="yes"%s/> /root';
                 $s.= sprintf($t, $sel==0?' checked="yes"':'');
                 $s.='<ul class="tree">';
             } else
@@ -386,17 +386,17 @@ function tree_del($id,$lev=0) {
     $sql = "DELETE FROM content WHERE content_topic_id=?";
     $sth = $db->prepare($sql);
     $sth->execute(array($id));
-	if ($lev==0) {
-		$sql = "SELECT * FROM topic WHERE topic_id=?";
-		$sth = $db->prepare($sql);
-		$sth->execute(array($id));
-		$rows = $sth->fetchAll(PDO::FETCH_ASSOC);
-		$pid = $rows[0]['topic_pid'];
-		$seq = $rows[0]['topic_seq'];
-		$sql = "UPDATE topic SET topic_seq=topic_seq-1 WHERE topic_pid=? AND topic_seq>?";
-		$sth = $db->prepare($sql);
-		$sth->execute(array($pid,$seq));
-	}
+    if ($lev==0) {
+        $sql = "SELECT * FROM topic WHERE topic_id=?";
+        $sth = $db->prepare($sql);
+        $sth->execute(array($id));
+        $rows = $sth->fetchAll(PDO::FETCH_ASSOC);
+        $pid = $rows[0]['topic_pid'];
+        $seq = $rows[0]['topic_seq'];
+        $sql = "UPDATE topic SET topic_seq=topic_seq-1 WHERE topic_pid=? AND topic_seq>?";
+        $sth = $db->prepare($sql);
+        $sth->execute(array($pid,$seq));
+    }
     $sql = "DELETE FROM topic WHERE topic_id=?";
     $sth = $db->prepare($sql);
     $sth->execute(array($id));
@@ -416,22 +416,22 @@ function tree_edit($id, $data) {
     $pid = $rows[0]['topic_pid'];
     $oldseq = $rows[0]['topic_seq'];
     $sql = "SELECT COALESCE(MIN(topic_seq),0) as min, COALESCE(MAX(topic_seq),0) as max".
-		   " FROM topic WHERE topic_pid=?";
-	$c = $db->prepare($sql);
-	$c->execute(array($pid));
-	$rows = $c->fetchAll(PDO::FETCH_ASSOC);
-	$min = $rows[0]['min'];
-	$max = $rows[0]['max'];
-	if ($min==0) $seq = 1; else {
-		if ($seq<$min) $seq = 1;
-		else if ($seq>$max) $seq=$max;
-	}
-	$sql = "UPDATE topic SET topic_seq=topic_seq-1 WHERE topic_pid=? AND topic_seq>=?";
-	$c = $db->prepare($sql);
-	$c->execute(array($pid, $oldseq));
-	$sql = "UPDATE topic SET topic_seq=topic_seq+1 WHERE topic_pid=? AND topic_seq>=?";
-	$c = $db->prepare($sql);
-	$c->execute(array($pid, $seq));
+           " FROM topic WHERE topic_pid=?";
+    $c = $db->prepare($sql);
+    $c->execute(array($pid));
+    $rows = $c->fetchAll(PDO::FETCH_ASSOC);
+    $min = $rows[0]['min'];
+    $max = $rows[0]['max'];
+    if ($min==0) $seq = 1; else {
+        if ($seq<$min) $seq = 1;
+        else if ($seq>$max) $seq=$max;
+    }
+    $sql = "UPDATE topic SET topic_seq=topic_seq-1 WHERE topic_pid=? AND topic_seq>=?";
+    $c = $db->prepare($sql);
+    $c->execute(array($pid, $oldseq));
+    $sql = "UPDATE topic SET topic_seq=topic_seq+1 WHERE topic_pid=? AND topic_seq>=?";
+    $c = $db->prepare($sql);
+    $c->execute(array($pid, $seq));
     $sql = "UPDATE topic SET topic_name=?,topic_seq=? WHERE topic_id=?";
     $c = $db->prepare($sql);
     $c->execute(array($topic, $seq, $id));
